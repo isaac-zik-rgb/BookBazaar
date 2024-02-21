@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import user_detail_api, RegisterUserAPIView, LogoutView
+from .views import RegisterUserAPIView, LogoutView, profile_details
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
@@ -17,7 +17,7 @@ schema_view = get_schema_view(
     permission_classes=(permissions.AllowAny,),
 )
 urlpatterns = [
-  path("get-details", user_detail_api, name="user_detail_api"),
+  path("profile", profile_details, name="user_detail_api"),
   path('register',RegisterUserAPIView.as_view()),
   path('logout',LogoutView.as_view(), name='logout'),
   path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
