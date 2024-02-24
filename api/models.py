@@ -13,6 +13,7 @@ class UserProfile(models.Model):
     notification_preferences = models.BooleanField(default=True)
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True)
     bio = models.TextField(blank=True)
+    books_posted = models.IntegerField(default=0)
 
     def __str__(self):
         return self.user.username

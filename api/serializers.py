@@ -24,11 +24,11 @@ class RegisterSerializer(serializers.ModelSerializer):
   password = serializers.CharField(
     write_only=True, required=True, validators=[validate_password])
   password2 = serializers.CharField(write_only=True, required=True)
-  last_login = serializers.DateTimeField(read_only=True)
+  last_login = serializers.DateTimeField(read_only=True, auto_now_add=True)
   class Meta:
     model = User
     fields = ('id', 'username', 'password', 'password2',
-         'email', 'first_name', 'last_name')
+         'email', 'first_name', 'last_name', 'last_login')
     extra_kwargs = {
       'first_name': {'required': True},
       'last_name': {'required': True},
@@ -55,12 +55,17 @@ class RegisterSerializer(serializers.ModelSerializer):
   
   #Serializer to Update User Profile
 class UserProfileSerializer(serializers.ModelSerializer):
-  user = serializers.HyperlinkedRelatedField(read_only=True, many=False, view_name='user-detail')
-  books_posted = serializers.SerializerMethodField()
-  
-  class Meta:
-    model = UserProfile
-    fields = fields = ('first_name', 'last_name', 'email', 'phone_number', 'address', 'favorite_genres', 'notification_preferences', 'profile_picture', 'bio', 'books_posted')
+    
+    books_posted = serializers.SerializerMethodField()
+    username = serializers.CharField(source='user.username', read_only=True)
+    email = serializers.EmailField(source='user.email', read_only=True)
+    first_name = serializers.CharField(source='user.first_name', read_only=True)
+    last_name = serializers.CharField(source='user.last_name', read_only=True)
+    last_login = serializers.DateTimeField(source='user.last_login', read_only=True)
+
+    class Meta:
+        model = UserProfile
+        fields = ['user','username','first_name', 'last_name', 'email', 'phone_number', 'address', 'favorite_genres', 'notification_preferences', 'profile_picture', 'bio', 'books_posted', 'last_login']
 
 
     def update(self, instance, validated_data):
@@ -77,4 +82,5 @@ class UserProfileSerializer(serializers.ModelSerializer):
     
     def get_books_posted(self, instance):
         # Logic to get the number of books posted by the user
-        return instance.books.all().count()
+        #return instance.books.all().count()
+       pass

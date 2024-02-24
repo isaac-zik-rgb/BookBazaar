@@ -17,7 +17,7 @@ schema_view = get_schema_view(
     permission_classes=(permissions.AllowAny,),
 )
 urlpatterns = [
-  path("profile", profile_details, name="user_detail_api"),
+  path("profile", profile_details, name="profile"),
   path('register',RegisterUserAPIView.as_view()),
   path('logout',LogoutView.as_view(), name='logout'),
   path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),

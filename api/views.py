@@ -25,9 +25,9 @@ def profile_details(request):
      Retrieve the profile of the currently logged-in user.
     """
     user = request.user
-    serializer = UserProfileSerializer(user.profile, many=False)
+    user_profile = user.profile
+    serializer = UserProfileSerializer(user_profile, many=False, context={'request': request})  # Pass request to context
     return Response(serializer.data)
-
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 @swagger_auto_schema(
