@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import RegisterUserAPIView, LogoutView, UserProfileDetail, UserProfileEdit
+from .views import RegisterUserAPIView, LogoutView, UserProfileDetail, UserProfileEdit, UserList, UserDetail
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
@@ -24,4 +24,6 @@ urlpatterns = [
   path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
   path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
   path('profile/edit', UserProfileEdit.as_view(), name='profile-edit'), 
+  path('profiles', UserList.as_view(), name='user'),
+  path('profiles/<int:pk>', UserDetail.as_view(), name='user'),
 ]

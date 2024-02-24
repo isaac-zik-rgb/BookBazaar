@@ -3,7 +3,7 @@ from django.shortcuts import render
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import UserSerializer,RegisterSerializer, UserProfileSerializer
+from .serializers import UserSerializer,RegisterSerializer, UserProfileSerializer, UserSerializer
 from django.contrib.auth.models import User
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -13,6 +13,24 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 from .models import UserProfile
 from .permissions import IsUserProfileOwnerOrReadOnly
 
+
+
+class UserList(generics.ListAPIView):
+    """
+    Retrieve a list of all users.
+    """
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
+
+
+class UserDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Retrieve, update or delete a user instance.
+    """
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
+
+   
 # Class based view to Get User Details using Token Authentication
 class UserProfileDetail(generics.RetrieveAPIView):
     """
@@ -26,7 +44,7 @@ class UserProfileDetail(generics.RetrieveAPIView):
         # Retrieve the profile associated with the currently authenticated user
         return self.request.user.profile
 
-class UserProfileEdit(generics.UpdateAPIView):
+class UserProfileEdit(generics.RetrieveUpdateDestroyAPIView):
     """
     Update the user profile of the currently logged-in user.
     """

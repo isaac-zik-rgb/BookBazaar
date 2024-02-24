@@ -9,9 +9,10 @@ import re
 
 #Serializer to Get User Details using Django Token Authentication
 class UserSerializer(serializers.ModelSerializer):
+
   class Meta:
     model = User
-    fields = ["id", "first_name", "last_name", "username"]
+    fields = ["id", "first_name", "last_name", "username", "email", "last_login"]
 
 
  
