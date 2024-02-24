@@ -10,41 +10,33 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics, status
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
-
+from .models import UserProfile
+from .permissions import IsUserProfileOwnerOrReadOnly
 
 # Class based view to Get User Details using Token Authentication
-@api_view(['GET'])
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
-@swagger_auto_schema(
-    responses={200: UserSerializer},
-    operation_description=" Retrieve the profile of the currently logged-in user."
-)
-def profile_details(request):
+class UserProfileDetail(generics.RetrieveAPIView):
     """
-     Retrieve the profile of the currently logged-in user.
+    Retrieve the user profile of the currently logged-in user.
     """
-    user = request.user
-    user_profile = user.profile
-    serializer = UserProfileSerializer(user_profile, many=False, context={'request': request})  # Pass request to context
-    return Response(serializer.data)
-@api_view(['PUT'])
-@permission_classes([IsAuthenticated])
-@swagger_auto_schema(
-    responses={200: UserSerializer},
-    operation_description=" Update the profile of the currently logged-in user."
-)
-def update_profile(request):
-    """
-     Update the profile of the currently logged-in user.
-    """
-    user = request.user
-    serializer = UserProfileSerializer(user.profile, data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
 
+    def get_object(self):
+        # Retrieve the profile associated with the currently authenticated user
+        return self.request.user.profile
+
+class UserProfileEdit(generics.UpdateAPIView):
+    """
+    Update the user profile of the currently logged-in user.
+    """
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated, IsUserProfileOwnerOrReadOnly]
+
+    def get_object(self):
+        # Retrieve the profile associated with the currently authenticated user
+        return self.request.user.profile
 # Class based view to register user
 class RegisterUserAPIView(generics.CreateAPIView):
     permission_classes = (AllowAny,)

@@ -17,11 +17,20 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from rest_framework.authtoken import views
+from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LogoutView
+from django.conf import settings
+
+auth_api_urls = []
+if settings.DEBUG:
+    auth_api_urls.append(path(r'verify/', include('rest_framework.urls')))
+
 
 
 urlpatterns = [
+  path(r'auth/', include(auth_api_urls)),
   path('admin/', admin.site.urls),
   path('api/',include('api.urls')),
   path('api/login', views.obtain_auth_token),
-  
+
 ]

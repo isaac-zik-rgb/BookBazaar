@@ -21,4 +21,12 @@ Authorization: Token 4aea093b57c8469c108528332e4b2413b7bd636c
 
 POST http://127.0.0.1:8000/api/logout
 Content-Type: application/json
-Authorization : Token 276c913627c94a370e19afeba63e98e5ad5943d8
+Authorization : Token 4aea093b57c8469c108528332e4b2413b7bd636c
+
+###
+PUT http://127.0.0.1:8000/api/profile/edit
+Content-Type: application/json
+Authorization: Token 2cbc8c56f652956f110354032988f19eaf9a3af0
+    
+    {"username": "wisdom1", "email": "isaacokechukwu22@gmail.com"}
+###

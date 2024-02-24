@@ -24,7 +24,7 @@ class RegisterSerializer(serializers.ModelSerializer):
   password = serializers.CharField(
     write_only=True, required=True, validators=[validate_password])
   password2 = serializers.CharField(write_only=True, required=True)
-  last_login = serializers.DateTimeField(read_only=True, auto_now_add=True)
+  last_login = serializers.DateTimeField(read_only=True, required=False)
   class Meta:
     model = User
     fields = ('id', 'username', 'password', 'password2',
@@ -32,6 +32,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     extra_kwargs = {
       'first_name': {'required': True},
       'last_name': {'required': True},
+      'email': {'required': True},
     }
 
    
@@ -55,32 +56,11 @@ class RegisterSerializer(serializers.ModelSerializer):
   
   #Serializer to Update User Profile
 class UserProfileSerializer(serializers.ModelSerializer):
-    
-    books_posted = serializers.SerializerMethodField()
-    username = serializers.CharField(source='user.username', read_only=True)
-    email = serializers.EmailField(source='user.email', read_only=True)
-    first_name = serializers.CharField(source='user.first_name', read_only=True)
-    last_name = serializers.CharField(source='user.last_name', read_only=True)
-    last_login = serializers.DateTimeField(source='user.last_login', read_only=True)
-
+    username = serializers.ReadOnlyField(source='user.username')
+    email = serializers.CharField(source='user.email')
+    first_name = serializers.CharField(source='user.first_name')
+    last_name = serializers.CharField(source='user.last_name')
+    last_login = serializers.ReadOnlyField(source='user.last_login')
     class Meta:
         model = UserProfile
-        fields = ['user','username','first_name', 'last_name', 'email', 'phone_number', 'address', 'favorite_genres', 'notification_preferences', 'profile_picture', 'bio', 'books_posted', 'last_login']
-
-
-    def update(self, instance, validated_data):
-        instance.first_name = validated_data.get('first_name', instance.first_name)
-        instance.last_name = validated_data.get('last_name', instance.last_name)
-        instance.phone_number = validated_data.get('phone_number', instance.phone_number)
-        instance.address = validated_data.get('address', instance.address)
-        instance.favorite_genres = validated_data.get('favorite_genres', instance.favorite_genres)
-        instance.notification_preferences = validated_data.get('notification_preferences', instance.notification_preferences)
-        instance.profile_picture = validated_data.get('profile_picture', instance.profile_picture)
-        instance.bio = validated_data.get('bio', instance.bio)
-        instance.save()
-        return instance
-    
-    def get_books_posted(self, instance):
-        # Logic to get the number of books posted by the user
-        #return instance.books.all().count()
-       pass
+        fields = ['id','username', 'email', 'first_name', 'last_name', 'last_login', 'phone_number', 'address', 'favorite_genres', 'notification_preferences', 'profile_picture', 'bio', 'books_posted']
