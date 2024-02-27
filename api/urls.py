@@ -28,8 +28,9 @@ schema_view = get_schema_view(
     permission_classes=(permissions.AllowAny,),
 )
 urlpatterns = [
+  path('profile/<int:pk>/', UserDetail.as_view(), name='user-detail'),
   path("profile", UserProfileDetail.as_view(), name="profile"),
-  path('register',RegisterUserAPIView.as_view(), name='register'),
+  path('auth/register',RegisterUserAPIView.as_view(), name='register'),
   path('logout',LogoutView.as_view(), name='logout'),
   path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
   path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
@@ -38,7 +39,7 @@ urlpatterns = [
 
   path('books/like/', BookInteractionViewSet.as_view({'post': 'create_like'}), name='like'),
   
-  path('books/review/', BookInteractionViewSet.as_view({'post': 'create_review'}), name='review'),
+  
   path('authors/<int:author_id>/follow/', BookInteractionViewSet.as_view({'post': 'follow_author'}), name='follow_author'),
   path('authors/<int:author_id>/followers/', BookInteractionViewSet.as_view({'get': 'list_followers'}), name='list_followers'),
   path('authors/<int:author_id>/unfollow/', BookInteractionViewSet.as_view({'delete': 'delete_follow'}), name='delete_follow'),
@@ -49,6 +50,12 @@ urlpatterns = [
   path('books/comment/', BookInteractionViewSet.as_view({'post': 'create_comment'}), name='comment'),
   path('books/<int:book_id>/comments/', BookInteractionViewSet.as_view({'get': 'list_comments'}), name='list_comments'),
   path('books/<int:book_id>/comments/<int:comment_id>/', DeleteCommentReviewsOrLike.as_view(), name='delete_comment'),
+
+  # for reviews
+  path('books/review/', BookInteractionViewSet.as_view({'post': 'create_review'}), name='review'),
+  path('books/<int:book_id>/review/<int:review_id>/', DeleteCommentReviewsOrLike.as_view(), name='delete_review'),
+  
+
 
   path('', include(router.urls)),
 ]

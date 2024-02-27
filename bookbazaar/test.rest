@@ -1,4 +1,4 @@
-POST http://127.0.0.1:8000/api/login
+POST http://127.0.0.1:8000/api/v1/auth/login
 Content-Type: application/json
 
 {
@@ -7,7 +7,7 @@ Content-Type: application/json
 }
 
 ###
-POST http://127.0.0.1:8000/api/register
+POST http://127.0.0.1:8000/api/v1/auth/register
 Content-Type: application/json
 
 {"username": "bright", "password": "Good!@#$%^&*Pass123", "password2": "Good!@#$%^&*Pass123","email": "bright@gmail.com", "first_name": "wisdom", "last_name": "castro"
@@ -16,7 +16,8 @@ Content-Type: application/json
 ###
 GET http://127.0.0.1:8000/api/profile
 Content-Type: application/json
-Authorization: Token 4aea093b57c8469c108528332e4b2413b7bd636c
+Authorization: Token a09a7ff6dd93b080d1c8301a2d356e6b10328495
+
 
 
 POST http://127.0.0.1:8000/api/logout
@@ -75,12 +76,25 @@ Content-Type: application/json
 Authorization: Token a09a7ff6dd93b080d1c8301a2d356e6b10328495
 
 
+# for reviews
+###
+POST  http://127.0.0.1:8000/api/books/review/
+Content-Type: application/json
+Authorization : Token a09a7ff6dd93b080d1c8301a2d356e6b10328495
+
+{
+    "book": 1,
+    "rating": 5,
+    "review": "how much. keep it up"
+}
+
+
+
 
 ###
-DELETE  http://127.0.0.1:8000/api/books/1/comments/4/
-
-
-
+GET  http://127.0.0.1:8000/api/books/1/reviews/
+Content-Type: application/json
+Authorization: Token a09a7ff6dd93b080d1c8301a2d356e6b10328495
 
 # bright token
 # a09a7ff6dd93b080d1c8301a2d356e6b10328495

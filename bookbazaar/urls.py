@@ -30,7 +30,7 @@ if settings.DEBUG:
 urlpatterns = [
   path(r'auth/', include(auth_api_urls)),
   path('admin/', admin.site.urls),
-  path('api/',include('api.urls')),
-  path('api/login', views.obtain_auth_token),
+  path('api/v1/',include('api.urls')),
+  path('api/v1/auth/login', views.obtain_auth_token),
 
 ]

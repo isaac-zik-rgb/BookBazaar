@@ -10,7 +10,6 @@ from .models import Follow, Book, Review, Comment, Like
 
 #Serializer to Get User Details using Django Token Authentication
 class UserSerializer(serializers.ModelSerializer):
-
   class Meta:
     model = User
     fields = ["id", "first_name", "last_name", "username", "email", "last_login"]
@@ -58,6 +57,7 @@ class RegisterSerializer(serializers.ModelSerializer):
   
   #Serializer to Update User Profile
 class UserProfileSerializer(serializers.ModelSerializer):
+
     username = serializers.ReadOnlyField(source='user.username')
     email = serializers.CharField(source='user.email')
     first_name = serializers.CharField(source='user.first_name')
@@ -123,10 +123,12 @@ class BookSerializer(serializers.ModelSerializer):
 
 # Serializer for Review Model
 class ReviewSerializer(serializers.ModelSerializer):
-  reviewer = serializers.ReadOnlyField(source='reviewer.username')
+  reviewer = serializers.HyperlinkedRelatedField(view_name='user-detail', source="reviewer.profile", read_only=True)
   class Meta:
     model = Review
     fields = ['id', 'book', 'reviewer', 'review', 'rating']
+
+    
 
 # Serializer for Comment Model
 class CommentSerializer(serializers.ModelSerializer):

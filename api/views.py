@@ -158,7 +158,12 @@ class BookInteractionViewSet(viewsets.ViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     def create_review(self, request):
-        return self.create_interaction(request, ReviewSerializer)
+        serializer = ReviewSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            serializer.save(reviewer=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
     def list_followers(self, request, author_id):
         followers = Follow.objects.filter(author_id=author_id)
@@ -188,9 +193,9 @@ class BookInteractionViewSet(viewsets.ViewSet):
 
     def list_reviews(self, request, book_id):
         try:
-            book = Book.objects.get(id=book_id, owner=request.user.profile)
+            book = Book.objects.get(id=book_id)
             reviews = Review.objects.filter(book=book)
-            serializer = ReviewSerializer(reviews, many=True)
+            serializer = ReviewSerializer(reviews, many=True, context={'request': request})
             return Response(serializer.data)
         except Book.DoesNotExist:
             return Response({'error': 'Book not found or you are not the owner.'}, status=status.HTTP_404_NOT_FOUND)
@@ -240,7 +245,7 @@ class DeleteCommentReviewsOrLike(generics.DestroyAPIView):
     
       def delete_review(self, request, book_id, review_id):
         try:
-            review = Review.objects.get(id=review_id, book_id=book_id, reviewer=request.user)
+            review = Review.objects.get(id=review_id, book_id=book_id, reviewer=request.profile)
             review.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Review.DoesNotExist:
