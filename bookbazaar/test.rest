@@ -2,7 +2,7 @@ POST http://127.0.0.1:8000/api/login
 Content-Type: application/json
 
 {
-    "username": "wisdom1",
+    "username": "bright",
     "password": "Good!@#$%^&*Pass123"
 }
 
@@ -10,14 +10,14 @@ Content-Type: application/json
 POST http://127.0.0.1:8000/api/register
 Content-Type: application/json
 
-{"username": "wisdom1", "password": "Good!@#$%^&*Pass123", "password2": "Good!@#$%^&*Pass123","email": "wisdom1@gmail.com", "first_name": "wisdom", "last_name": "castro"
+{"username": "bright", "password": "Good!@#$%^&*Pass123", "password2": "Good!@#$%^&*Pass123","email": "bright@gmail.com", "first_name": "wisdom", "last_name": "castro"
 }
 
 ###
 GET http://127.0.0.1:8000/api/profile
 Content-Type: application/json
 Authorization: Token 4aea093b57c8469c108528332e4b2413b7bd636c
-###
+
 
 POST http://127.0.0.1:8000/api/logout
 Content-Type: application/json
@@ -27,6 +27,60 @@ Authorization : Token 4aea093b57c8469c108528332e4b2413b7bd636c
 PUT http://127.0.0.1:8000/api/profile/edit
 Content-Type: application/json
 Authorization: Token 2cbc8c56f652956f110354032988f19eaf9a3af0
-    
-    {"username": "wisdom1", "email": "isaacokechukwu22@gmail.com"}
+
+    {"username": "wisdom12", "email": "isaacokechukwu2@gmail.com", "first_name": "wisdom", "last_name": "castro"}
 ###
+
+
+// GEt comment on a book
+###
+GET http://127.0.0.1:8000/api/books/1/comments/
+Content-Type: application/json
+Authorization: Token 2cbc8c56f652956f110354032988f19eaf9a3af0
+
+
+//Post a book
+###
+PUT http://127.0.0.1:8000/api/books/1/
+Content-Type: application/json
+Authorization: Token 2cbc8c56f652956f110354032988f19eaf9a3af0
+
+{
+    "title": "No Way Home"
+}
+
+
+//post comment
+###
+POST http://127.0.0.1:8000/api/books/comment/
+Content-Type: application/json
+Authorization: Token ea8b5e6b987b0108c398fff11a1a97e3f680b4f4
+
+{
+    "book_id": 1,
+    "comment": "Wow, I love Harry potter."
+}
+
+
+###
+DELETE http://127.0.0.1:8000/api/books/1/comments/2/
+Content-Type: application/json
+Authorization: Token ea8b5e6b987b0108c398fff11a1a97e3f680b4f4
+
+
+
+###
+DELETE  http://127.0.0.1:8000/api/books/1/comments/6/
+Content-Type: application/json
+Authorization: Token a09a7ff6dd93b080d1c8301a2d356e6b10328495
+
+
+
+###
+DELETE  http://127.0.0.1:8000/api/books/1/comments/4/
+
+
+
+
+# bright token
+# a09a7ff6dd93b080d1c8301a2d356e6b10328495

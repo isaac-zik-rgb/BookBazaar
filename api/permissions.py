@@ -27,4 +27,16 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
             return True
         # Write permission is only allowed to the owner of an object
         return obj.owner == request.user
-    
+
+
+
+
+
+class IsCommentOwnerOrBookOwner(permissions.BasePermission):
+    """
+    Custom permission to allow only the owner of the comment or the owner of the book to delete the comment.
+    """
+
+    def has_object_permission(self, request, view, obj):
+        # Allow if the user is the commenter or the owner of the book
+         return request.user.is_authenticated and (obj.commenter == request.user or obj.book.owner == request.user)
