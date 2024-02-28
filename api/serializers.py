@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
 import re
-from .models import Follow, Book, Review, Comment, Like
+from .models import Follow, Book, Review, Comment, Like, Cart, CartItem, Order, OrderItem
 
 #Serializer to Get User Details using Django Token Authentication
 class UserSerializer(serializers.ModelSerializer):
@@ -64,14 +64,19 @@ class UserProfileSerializer(serializers.ModelSerializer):
     last_name = serializers.CharField(source='user.last_name')
     last_login = serializers.ReadOnlyField(source='user.last_login')
     books_posted_count = serializers.SerializerMethodField()
+    followers_count = serializers.SerializerMethodField()
 
     
+    def get_followers_count(self, instance):
+        
+        return Follow.objects.filter(followed_user=instance.user).count()
+
     def get_books_posted_count(self, instance):
         return Book.objects.filter(owner=instance).count()
 
     class Meta:
         model = UserProfile
-        fields = ['id','username', 'email', 'first_name', 'last_name', 'last_login', 'phone_number', 'address', 'favorite_genres', 'notification_preferences', 'profile_picture', 'bio', 'books_posted_count']
+        fields = ['id','username', 'email', 'first_name', 'last_name', 'last_login', 'phone_number', 'address', 'favorite_genres', 'notification_preferences', 'profile_picture', 'bio', 'books_posted_count', 'followers_count']
 
     def update(self, instance, validated_data):
         user_data = validated_data.pop('user')
@@ -97,9 +102,11 @@ class FollowSerializer(serializers.ModelSerializer):
     follower = serializers.ReadOnlyField(source='user.username')
     following = serializers.ReadOnlyField(source='followed_user.username')
 
+
     class Meta:
         model = Follow
         fields = ['id', 'follower', 'following', 'followed_on']
+    
 
 # Serializer for the Book Model
 class BookSerializer(serializers.ModelSerializer):
@@ -132,7 +139,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 # Serializer for Comment Model
 class CommentSerializer(serializers.ModelSerializer):
-    commenter = serializers.ReadOnlyField(source='commenter.username')
+    commenter = serializers.HyperlinkedRelatedField(view_name='user-detail', source="commenter.profile", read_only=True)
     class Meta:
         model = Comment
         fields = ['id', 'book_id', 'comment', 'commented_on', 'commenter']
@@ -153,3 +160,36 @@ class LikeSerializer(serializers.ModelSerializer):
     fields = ['id', 'user', 'book']
 
 
+# Serializer for Book Cart Model
+class CartSerializer(serializers.ModelSerializer):
+  user = serializers.ReadOnlyField(source='user.username')
+  class Meta:
+    model = Cart
+    fields = ['id', 'user', 'books']
+    read_only_fields = ['user']  # Ensure this field is read-only
+  
+
+# Serializer for Cart Item Model
+class CartItemSerializer(serializers.ModelSerializer):
+  book = serializers.ReadOnlyField(source='book.title')
+  cart = serializers.ReadOnlyField(source='cart.id')
+  class Meta:
+    model = CartItem
+    fields = ['id', 'book', 'cart', 'quantity']
+
+# Serializer for Order Model
+class OrderSerializer(serializers.ModelSerializer):
+  user = serializers.ReadOnlyField(source='user.username')
+  class Meta:
+    model = Order
+    fields = ['id', 'user', 'books', 'ordered_on', 'total']
+    read_only_fields = ['user', 'ordered_on', 'total']  # Ensure these fields are read-only
+
+# Serializer for Order Item Model
+class OrderItemSerializer(serializers.ModelSerializer):
+  book = serializers.ReadOnlyField(source='book.title')
+  order = serializers.ReadOnlyField(source='order.id')
+  class Meta:
+    model = OrderItem
+    fields = ['id', 'book', 'order', 'quantity']
+    read_only_fields = ['order']  # Ensure this field is read-only

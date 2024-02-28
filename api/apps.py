@@ -7,3 +7,4 @@ class UsersConfig(AppConfig):
 
     def ready(self):
         import api.signals
+        import api.notification.signals

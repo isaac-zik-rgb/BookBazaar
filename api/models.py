@@ -46,6 +46,9 @@ class Follow(models.Model):
     followed_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followings')
     followed_on = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f'{self.user} followed {self.followed_user}'
+
 class UserProfile(models.Model):
     first_name = models.CharField(max_length=100, blank=True)
     last_name = models.CharField(max_length=100, blank=True)
@@ -57,6 +60,7 @@ class UserProfile(models.Model):
     notification_preferences = models.BooleanField(default=True)
     profile_picture = models.FileField(upload_to=profile_image_path, null=True, blank=True)
     bio = models.TextField(blank=True)
+    
     
 
     def __str__(self):
@@ -83,7 +87,7 @@ class Review(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='reviews')
     reviewer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews')
     review = models.TextField()
-    rating = models.IntegerField()
+    rating = models.FloatField()
 
     def __str__(self):
         return f'{self.reviewer} reviewed {self.book}'
@@ -96,7 +100,7 @@ class Comment(models.Model):
     commented_on = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'{self.commenter} commented on {self.book}'
+        return f'{self.commenter} commented on {self.book_id}'
 
 # Models to store likes and dislikes for books
 class Like(models.Model):
@@ -146,8 +150,8 @@ class OrderItem(models.Model):
 
 # Model to store user notifications
 class Notification(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    message = models.TextField()
+    recipient = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
     is_read = models.BooleanField(default=False)
     created_on = models.DateTimeField(auto_now_add=True)
 

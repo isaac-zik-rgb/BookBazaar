@@ -8,7 +8,7 @@ from django.conf import settings
 from .views import BookViewSet, BookInteractionViewSet
 
 from rest_framework.routers import DefaultRouter
-from .views import BookViewSet, AllBooksViewSet, DeleteCommentReviewsOrLike
+from .views import BookViewSet, AllBooksViewSet, CartViewSet, CartItemViewSet, OrderViewSet, OrderItemViewSet
 
 router = DefaultRouter()
 router.register(r'books', BookViewSet, basename='book')
@@ -28,6 +28,7 @@ schema_view = get_schema_view(
     permission_classes=(permissions.AllowAny,),
 )
 urlpatterns = [
+# =========================================================================================================================================================================================================
   path('profile/<int:pk>/', UserDetail.as_view(), name='user-detail'),
   path("profile", UserProfileDetail.as_view(), name="profile"),
   path('auth/register',RegisterUserAPIView.as_view(), name='register'),
@@ -37,23 +38,43 @@ urlpatterns = [
   path('profile/edit', UserProfileEdit.as_view(), name='profile-edit'), 
   path('profiles', UserList.as_view(), name='user'),
 
-  path('books/like/', BookInteractionViewSet.as_view({'post': 'create_like'}), name='like'),
+#===========================================================================================================================================================================================================
+  # Api endpoint for likes
+
+  path('books/<int:book_id>/like/', BookInteractionViewSet.as_view({'post': 'create_like', 'get': 'list_likes'}), name='like'),
+  path('books/<int:book_id>/like/<int:like_id>/', BookInteractionViewSet.as_view({'delete': 'delete_like', 'get': 'retrieve_like'}), name='like'),
   
-  
+  #========================================================================================================================================================================================================
+  # api endpoint for all followers
   path('authors/<int:author_id>/follow/', BookInteractionViewSet.as_view({'post': 'follow_author'}), name='follow_author'),
   path('authors/<int:author_id>/followers/', BookInteractionViewSet.as_view({'get': 'list_followers'}), name='list_followers'),
   path('authors/<int:author_id>/unfollow/', BookInteractionViewSet.as_view({'delete': 'delete_follow'}), name='delete_follow'),
   path('books/<int:book_id>/like/', BookInteractionViewSet.as_view({'get': 'list_likes'}), name='list_likes'),
-  path('books/<int:book_id>/review/', BookInteractionViewSet.as_view({'get': 'list_reviews'}), name='list_reviews'),
+  
+  #========================================================================================================================================================================================================
+  # api endpoint for all comments
 
-  # for book comments
   path('books/comment/', BookInteractionViewSet.as_view({'post': 'create_comment'}), name='comment'),
   path('books/<int:book_id>/comments/', BookInteractionViewSet.as_view({'get': 'list_comments'}), name='list_comments'),
-  path('books/<int:book_id>/comments/<int:comment_id>/', DeleteCommentReviewsOrLike.as_view(), name='delete_comment'),
+  path('books/<int:book_id>/comments/<int:comment_id>/', BookInteractionViewSet.as_view({'delete': 'delete_comment'}), name='delete_comment'),
+  path('books/<int:book_id>/comments/<int:comment_id>', BookInteractionViewSet.as_view({'put': 'update_comment'}), name='update_comment'),
 
-  # for reviews
-  path('books/review/', BookInteractionViewSet.as_view({'post': 'create_review'}), name='review'),
-  path('books/<int:book_id>/review/<int:review_id>/', DeleteCommentReviewsOrLike.as_view(), name='delete_review'),
+# ======================================================================================================================================================================================================
+  # api endpoint for reviews
+  path('books/reviews/', BookInteractionViewSet.as_view({'post': 'create_review'}), name='review'),
+  path('books/<int:book_id>/reviews/<int:review_id>/', BookInteractionViewSet.as_view({'delete': "delete_review", 'put': "update_review", "get": "retrieve_review"}), name='review-detail'),
+  
+  # list all reviews for a book
+  path('books/<int:book_id>/reviews/', BookInteractionViewSet.as_view({'get': 'list_reviews'}), name='list_reviews'),
+  #===================================================================================================================================================================================================
+
+
+  # for Cart
+  path('cart/', CartViewSet.as_view({'get': 'list', 'post': 'create'}), name='cart'),
+  path('cart/<int:pk>/', CartViewSet.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'}), name='cart-detail'),
+  path('cart/<int:cart_id>/add/', CartItemViewSet.as_view({'post': 'create'}), name='add-to-cart'),
+  path('cart/<int:cart_id>/remove/', CartItemViewSet.as_view({'delete': 'destroy'}), name='remove-from-cart'),
+  path('cart/<int:cart_id>/items/', CartItemViewSet.as_view({'get': 'list'}), name='cart-items'),
   
 
 

@@ -58,11 +58,18 @@
 # - /api/v1/profile/delete/ [DELETE] (Protected) (Requires authentication)
 
 # Books
-# - /api/v1/books/<int:pk> [GET]
-# - /api/v1/books [GET]
-# - /api/v1/books [POST] (Protected) (Requires authentication)
+# - /api/v1/all-books/ [GET] (list all books in the database)
+
+# - /api/v1/all-books/<int:pk> [GET] (get a single book)
+
+# - /api/v1/books/<int:pk> [GET] (get a single book that belongs to the login in user) (Protected) (Requires authentication)
+
+# - /api/v1/books/ [GET] (Protected) (Requires authentication) (list all books that belongs to the login in user)
+
+# - /api/v1/books/ [POST] (Protected) (Requires authentication)
+
 # - /api/v1/books/edit/ [PUT] (Protected) (Requires authentication)
-# - /api/v1/books/delete/ [DELETE] (Protected) (Requires authentication)
+# - /api/v1/books/<int:pk> [DELETE] (Protected) (Requires authentication)
 
 
 # Reviews
