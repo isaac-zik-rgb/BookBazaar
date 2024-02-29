@@ -1,0 +1,25 @@
+POST http://127.0.0.1:8000/login
+Content-Type: application/json
+
+{
+    "username": "test111",
+    "password": "Good!@#$%^&*Pass123"
+}
+
+###
+POST http://127.0.0.1:8000/register
+Content-Type: application/json
+
+{"username": "test111", "password": "Good!@#$%^&*Pass123", "password2": "Good!@#$%^&*Pass123","email": "test1@gmail.com", "first_name": "test", "last_name": "test", "last_name": "chukwus"
+}
+
+###
+GET http://127.0.0.1:8000/get-details
+Content-Type: application/json
+Authorization: Token 276c913627c94a370e19afeba63e98e5ad5943d8
+
+###
+
+POST http://127.0.0.1:8000/api/logout
+Content-Type: application/json
+Authorization : Token 276c913627c94a370e19afeba63e98e5ad5943d8
