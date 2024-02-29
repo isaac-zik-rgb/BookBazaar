@@ -1,7 +1,7 @@
 // constants.ts
 export const colors = {
-  primary: '#3498db',
-  secondary: '#2ecc71',
+  primary: '#8AB907',
+  secondary: '#207BA7',
   accent: '#e74c3c',
 };
 
@@ -16,3 +16,26 @@ export const spacing = {
   medium: '8px',
   large: '16px',
 };
+
+export enum PAGES_URL {
+  HOME = '/',
+  WISHLIST = '/wishlist',
+  ABOUT = '/about',
+  LOGIN = '/login',
+  SIGNUP = '/signup',
+}
+
+export const NavMenu = [
+  {
+    title: 'Explore',
+    url: PAGES_URL.HOME,
+  },
+  {
+    title: 'Whishlist',
+    url: PAGES_URL.WISHLIST,
+  },
+  {
+    title: 'About',
+    url: PAGES_URL.ABOUT,
+  },
+];

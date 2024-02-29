@@ -1,11 +1,12 @@
-import { Slider } from '@mui/material';
-
+import BookCatalog from 'containers/Home/BookCatalog';
+import HeroSection from 'containers/Home/HeroSection';
+import MainLayout from 'layouts/MainLayout';
 function Home() {
   return (
-    <div className="flex gap-10">
-      <Slider defaultValue={30} />
-      <Slider defaultValue={30} className="text-yellow-600" />
-    </div>
+    <MainLayout>
+      <HeroSection />
+      <BookCatalog />
+    </MainLayout>
   );
 }
 
