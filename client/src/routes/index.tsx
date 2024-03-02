@@ -2,6 +2,8 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import Home from 'pages/Home';
 import BookDetails from 'pages/BookDetails';
+import DashboardLayout from 'layouts/DashboardLayout';
+import BookManagement from 'pages/BookManagement';
 
 function Router() {
   const router = createBrowserRouter([
@@ -12,6 +14,16 @@ function Router() {
     {
       path: '/books/:id',
       element: <BookDetails />,
+    },
+    {
+      path: 'dashboard',
+      element: <DashboardLayout />,
+      children: [
+        {
+          path: 'books-management',
+          element: <BookManagement />,
+        },
+      ],
     },
   ]);
 
