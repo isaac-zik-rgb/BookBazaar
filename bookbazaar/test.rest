@@ -1,25 +1,180 @@
-POST http://127.0.0.1:8000/login
+POST http://127.0.0.1:8000/api/v1/auth/login
 Content-Type: application/json
 
 {
-    "username": "test111",
-    "password": "Good!@#$%^&*Pass123"
+    "username": "Isaac23@",
+    "password": "Okechukwu22@"
 }
 
 ###
-POST http://127.0.0.1:8000/register
+POST http://127.0.0.1:8000/api/v1/auth/register
 Content-Type: application/json
 
-{"username": "test111", "password": "Good!@#$%^&*Pass123", "password2": "Good!@#$%^&*Pass123","email": "test1@gmail.com", "first_name": "test", "last_name": "test", "last_name": "chukwus"
+{"username": "bright", "password": "Good!@#$%^&*Pass123", "password2": "Good!@#$%^&*Pass123","email": "bright@gmail.com", "first_name": "wisdom", "last_name": "castro"
 }
 
 ###
-GET http://127.0.0.1:8000/get-details
+DELETE http://127.0.0.1:8000/api/v1/profile/6/
 Content-Type: application/json
-Authorization: Token 276c913627c94a370e19afeba63e98e5ad5943d8
+Authorization: Token 2cbc8c56f652956f110354032988f19eaf9a3af0
 
-###
 
 POST http://127.0.0.1:8000/api/logout
 Content-Type: application/json
-Authorization : Token 276c913627c94a370e19afeba63e98e5ad5943d8
+Authorization : Token 4aea093b57c8469c108528332e4b2413b7bd636c
+
+###
+DELETE http://127.0.0.1:8000/api/v1/profile/edit
+Content-Type: application/json
+Authorization: Token 2cbc8c56f652956f110354032988f19eaf9a3af0
+
+
+# GET ALL USERS
+###
+GET http://127.0.0.1:8000/api/v1/profiles
+
+// GEt comment on a book
+###
+GET http://127.0.0.1:8000/api/v1/books/3/comments/
+Content-Type: application/json
+Authorization: Token 2cbc8c56f652956f110354032988f19eaf9a3af0
+
+//Post a book
+###
+PUT http://127.0.0.1:8000/api/books/1/
+Content-Type: application/json
+Authorization: Token 2cbc8c56f652956f110354032988f19eaf9a3af0
+
+{
+    "title": "No Way Home"
+}
+
+
+# GET A BOOK
+###
+GET  http://127.0.0.1:8000/api/v1/all-books/
+
+//post comment
+###
+POST http://127.0.0.1:8000/api/v1/books/comment/
+Content-Type: application/json
+Authorization: Token a09a7ff6dd93b080d1c8301a2d356e6b10328495
+
+{
+    "book_id": 3,
+    "comment": "Chosen is a great book, i love the fantasy."
+}
+
+# UPDATE COMMENT
+###
+PUT http://127.0.0.1:8000/api/v1/books/3/comments/11
+Content-Type: application/json
+Authorization: Token a09a7ff6dd93b080d1c8301a2d356e6b10328495
+
+{
+    "comment": "Chosen is a great book, it's filled with friction and suspense. I love the fantasy."
+}
+
+###
+DELETE http://127.0.0.1:8000/api/v1/books/3/comments/13/
+Content-Type: application/json
+Authorization: Token a09a7ff6dd93b080d1c8301a2d356e6b10328495
+
+============================================================================
+============================================================================
+
+# Testing for reviews
+
+# Create a review for a book with the book id
+###
+POST  http://127.0.0.1:8000/api/v1/books/reviews/
+Content-Type: application/json
+Authorization : Token a09a7ff6dd93b080d1c8301a2d356e6b10328495
+
+{
+    "book": 3,
+    "rating": 5,
+    "review": "Chuks is a great Author, he has a way of making his readers feel the emotions of the characters in his books. I love the plots."
+}
+
+
+# GET All reviews for a book with the book id
+###
+GET  http://127.0.0.1:8000/api/v1/books/1/reviews
+
+
+# Update a review for a book with the book id and review id
+###
+PUT  http://127.0.0.1:8000/api/v1/books/3/reviews/5/
+Content-Type: application/json
+Authorization: Token a09a7ff6dd93b080d1c8301a2d356e6b10328495
+
+{
+    "rating": 4.6,
+    "review": "Chuks is a great Author, he has a way of making his readers feel the emotions of the characters in his books. I love the plots. I love the suspense."
+}
+
+
+# GET a review for a book with the book id and review id
+###
+GET  http://127.0.0.1:8000/api/v1/books/3/reviews/4
+
+
+
+# Delete a review for a book with the book id and review id
+###
+DELETE  http://127.0.0.1:8000/api/v1/books/1/reviews/4/
+Content-Type: application/json
+Authorization: Token a09a7ff6dd93b080d1c8301a2d356e6b10328495
+
+
+
+
+# GET ALL FOLLOWERS FOR A USER
+###
+GET  http://127.0.0.1:8000/api/v1/authors/6/followers/
+
+# post a follow for a user
+###
+POST http://127.0.0.1:8000/api/v1/authors/6/follow/
+Content-Type: application/json
+Authorization: Token b673780d1ad1f0f92851223eeb70ec8bad9e45b1
+
+# Unfollow a user
+###
+DELETE http://127.0.0.1:8000/api/v1/authors/3/unfollow/
+Content-Type: application/json
+Authorization: Token b673780d1ad1f0f92851223eeb70ec8bad9e45b1
+
+
+
+# GET ALL LIKES FOR USER
+###
+GET  http://127.0.0.1:8000/api/v1/books/3/like/
+
+# POST A LIKE FOR A BOOK
+###
+POST http://127.0.1:8000/api/v1/books/3/like/
+Content-Type: application/json
+Authorization: Token 2cbc8c56f652956f110354032988f19eaf9a3af0
+
+# DELETE A LIKE FOR A BOOK
+###
+DELETE http://127.0.0.1:8000/api/v1/books/3/like/3/
+Content-Type: application/json
+Authorization: Token 2cbc8c56f652956f110354032988f19eaf9a3af0
+
+
+# Retrive like for a particular like id
+###
+GET  http://127.0.0.1:8000/api/v1/books/3/like/3/
+
+
+
+a09a7ff6dd93b080d1c8301a2d356e6b10328495 // bright token
+2cbc8c56f652956f110354032988f19eaf9a3af0 // wisdom token
+ea8b5e6b987b0108c398fff11a1a97e3f680b4f4 //chuks token
+b673780d1ad1f0f92851223eeb70ec8bad9e45b1 // isaac23@ token
+
+
+Good!@#$%^&*Pass123
