@@ -114,10 +114,17 @@ class BookSerializer(serializers.ModelSerializer):
     posted_on = serializers.ReadOnlyField()
     owner = serializers.ReadOnlyField(source='owner.user.username')
     posted_by = serializers.ReadOnlyField(source='posted_by.username')
+    liked_count = serializers.SerializerMethodField()
+    reviews_count = serializers.SerializerMethodField()
+
+    def get_reviews_count(self, instance):
+        return Review.objects.filter(book=instance).count()
+    def get_liked_count(self, instance):
+        return Like.objects.filter(book=instance).count()
    
     class Meta:
         model = Book
-        fields = ['id', 'title', 'author', 'genre', 'description', 'posted_on', 'price', 'book_cover', 'owner', 'posted_by']
+        fields = ['id', 'title', 'author', 'genre', 'description', 'posted_on', 'price', 'book_cover', 'owner', 'posted_by', 'liked_count', 'reviews_count']
 
     def create(self, validated_data):
         # Assign owner based on the authenticated user

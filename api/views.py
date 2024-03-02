@@ -1,5 +1,5 @@
 from django.shortcuts import render
-
+from django.db.models import Q
 from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -128,7 +128,17 @@ class AllBooksViewSet(viewsets.ReadOnlyModelViewSet):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [AllowAny]  # Allow anyone to view all book
+    permission_classes = [AllowAny]  # Allow anyone to view all books
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        query = request.query_params.get('query', None)
+        
+        if query:
+            queryset = queryset.filter(Q(title__icontains=query) | Q(author__icontains=query))
+        
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 class BookInteractionViewSet(viewsets.ViewSet):
     """
