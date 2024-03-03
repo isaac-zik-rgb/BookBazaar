@@ -60,7 +60,7 @@ Authorization: Token 2cbc8c56f652956f110354032988f19eaf9a3af0
 
 # GET A BOOK
 ###
-GET  http://127.0.0.1:8000/api/v1/all-books/
+GET  http://127.0.0.1:8000/api/v1/all-books/?genre=Action
 
 //post comment
 ###

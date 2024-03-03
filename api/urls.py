@@ -4,7 +4,6 @@ from .views import RegisterUserAPIView, LogoutView, UserProfileDetail, UserProfi
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
-from django.conf import settings
 from .views import BookViewSet, BookInteractionViewSet
 
 from rest_framework.routers import DefaultRouter
@@ -76,7 +75,13 @@ urlpatterns = [
   path('cart/<int:cart_id>/remove/', CartItemViewSet.as_view({'delete': 'destroy'}), name='remove-from-cart'),
   path('cart/<int:cart_id>/items/', CartItemViewSet.as_view({'get': 'list'}), name='cart-items'),
   
-
+#URL for order
+  path('order/', OrderViewSet.as_view({'get': 'list', 'post': 'create'}), name='order'),
+  path('order/<int:pk>/', OrderViewSet.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'}), name='order-detail'),
+  path('order/<int:order_id>/add/', OrderItemViewSet.as_view({'post': 'create'}), name='add-to-order'),
+  path('order/<int:order_id>/remove/', OrderItemViewSet.as_view({'delete': 'destroy'}), name='remove-from-order'),
+  path('order/<int:order_id>/items/', OrderItemViewSet.as_view({'get': 'list'}), name='order-items'),
+  
 
   path('', include(router.urls)),
 ]

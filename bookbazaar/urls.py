@@ -20,6 +20,7 @@ from rest_framework.authtoken import views
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.views import LogoutView
 from django.conf import settings
+from django.conf.urls.static import static
 
 auth_api_urls = []
 if settings.DEBUG:
@@ -33,4 +34,4 @@ urlpatterns = [
   path('api/v1/',include('api.urls')),
   path('api/v1/auth/login', views.obtain_auth_token),
 
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
