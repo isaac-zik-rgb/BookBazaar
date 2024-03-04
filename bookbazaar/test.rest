@@ -2,21 +2,22 @@ POST http://127.0.0.1:8000/api/v1/auth/login
 Content-Type: application/json
 
 {
-    "username": "Isaac23@",
-    "password": "Okechukwu22@"
+    "username": "Zaria1",
+    "password": "Good!@#$%^&*Pass123"
 }
 
 ###
 POST http://127.0.0.1:8000/api/v1/auth/register
 Content-Type: application/json
 
-{"username": "bright", "password": "Good!@#$%^&*Pass123", "password2": "Good!@#$%^&*Pass123","email": "bright@gmail.com", "first_name": "wisdom", "last_name": "castro"
+{"username": "Zaria1", "password": "Good!@#$%^&*Pass123", "password2": "Good!@#$%^&*Pass123","email": "Zaria@gmail.com", "first_name": "zaria", "last_name": "castro"
 }
 
+
 ###
-DELETE http://127.0.0.1:8000/api/v1/profile/6/
+GET http://127.0.0.1:8000/api/v1/profile
 Content-Type: application/json
-Authorization: Token 2cbc8c56f652956f110354032988f19eaf9a3af0
+Authorization: Token 32bee8add20dfd779ee14d11ebae8f27899d8a1d
 
 
 POST http://127.0.0.1:8000/api/logout
@@ -24,14 +25,21 @@ Content-Type: application/json
 Authorization : Token 4aea093b57c8469c108528332e4b2413b7bd636c
 
 ###
-DELETE http://127.0.0.1:8000/api/v1/profile/edit
+PUT http://127.0.0.1:8000/api/v1/profile/edit
 Content-Type: application/json
-Authorization: Token 2cbc8c56f652956f110354032988f19eaf9a3af0
+Authorization: Token 32bee8add20dfd779ee14d11ebae8f27899d8a1d
+
+{
+    "username": "Zaria1",
+    "email": "zack@gmail.com",
+    "first_name": "zaria",
+    "last_name": "castro"
+    }
 
 
 # GET ALL USERS
 ###
-GET http://127.0.0.1:8000/api/v1/profiles
+GET http://127.0.0.1:8000/api/v1/profile/7
 
 // GEt comment on a book
 ###
@@ -41,7 +49,7 @@ Authorization: Token 2cbc8c56f652956f110354032988f19eaf9a3af0
 
 //Post a book
 ###
-PUT http://127.0.0.1:8000/api/books/1/
+POST http://127.0.0.1:8000/api/books/1/
 Content-Type: application/json
 Authorization: Token 2cbc8c56f652956f110354032988f19eaf9a3af0
 
@@ -52,7 +60,7 @@ Authorization: Token 2cbc8c56f652956f110354032988f19eaf9a3af0
 
 # GET A BOOK
 ###
-GET  http://127.0.0.1:8000/api/v1/all-books/
+GET  http://127.0.0.1:8000/api/v1/all-books/?genre=Action
 
 //post comment
 ###
@@ -178,3 +186,6 @@ b673780d1ad1f0f92851223eeb70ec8bad9e45b1 // isaac23@ token
 
 
 Good!@#$%^&*Pass123
+
+32bee8add20dfd779ee14d11ebae8f27899d8a1d
+Zaria1 9

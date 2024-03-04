@@ -8,7 +8,7 @@ from django.utils.deconstruct import deconstructible
 from django.contrib.auth.models import User
 @deconstructible
 class ProfileImagePathGenerator(object):
-    def __init__():
+    def __init__(self):
         pass
 
     def __call__(self, instance, filename):
@@ -37,7 +37,7 @@ class BookCoverImagePathGenerator(object):
 
 
 # instantiate object
-profile_image_path = ProfileImagePathGenerator
+
 book_cover_imagePath = BookCoverImagePathGenerator()
 
 # Model to store user followings
@@ -58,7 +58,7 @@ class UserProfile(models.Model):
     address = models.CharField(max_length=255, blank=True)
     favorite_genres = models.CharField(max_length=100, blank=True)
     notification_preferences = models.BooleanField(default=True)
-    profile_picture = models.FileField(upload_to=profile_image_path, null=True, blank=True)
+    profile_picture = models.FileField(upload_to=ProfileImagePathGenerator(), null=True, blank=True)
     bio = models.TextField(blank=True)
     
     
