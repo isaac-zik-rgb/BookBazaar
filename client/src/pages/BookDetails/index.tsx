@@ -60,9 +60,9 @@ const Details = React.forwardRef(
       <div
         {...rest}
         ref={ref}
-        className="absolute -top-[14rem] flex w-full justify-between gap-x-10 px-20"
+        className="absolute -top-[14rem] flex flex-col lg:flex-row w-full justify-between gap-10 px-20"
       >
-        <div className="flex h-max w-3/5 shrink-0 flex-col gap-y-14 rounded-lg bg-white pb-10 shadow-md">
+        <div className="flex h-max lg:w-3/5 shrink-0 flex-col gap-y-14 rounded-lg bg-white pb-10 shadow-md">
           <div className="flex gap-x-6">
             <div className="h-[27rem] w-[17rem] shrink-0 shadow-lg">
               <img

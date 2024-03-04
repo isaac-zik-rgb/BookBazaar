@@ -4,7 +4,7 @@ import { Link, NavLink } from 'react-router-dom';
 
 const Header = () => {
   return (
-    <div className="sticky  flex w-full items-center justify-between rounded-es-md bg-primary px-20 py-3">
+    <div className="sticky gap-x-8 flex w-full items-center justify-between rounded-es-md bg-primary mx-auto py-3 max-w-7xl px-20">
       <Link className="text-3xl" id="logo" to="/">
         BOOKBAZAAR
       </Link>
@@ -28,12 +28,14 @@ const Header = () => {
           </NavLink>
         ))}
       </div>
-      <div className="space-x-6" id="auth-buttons">
+      <div className="flex gap-x-6" id="auth-buttons">
         <Link to={PAGES_URL.LOGIN}>
           <Button className="border border-white text-white">LOGIN</Button>
         </Link>
         <Link to={PAGES_URL.LOGIN}>
-          <Button className="bg-white py-2.5 text-black">SIGN UP</Button>
+          <Button className="bg-white py-2.5 whitespace-nowrap text-black">
+            SIGN UP
+          </Button>
         </Link>
       </div>
     </div>
