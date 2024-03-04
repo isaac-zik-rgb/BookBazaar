@@ -10,7 +10,7 @@ function Router() {
   const router = createBrowserRouter([
     {
       path: '/',
-      element: <Home />
+      element: <Home />,
     },
     {
       path: '/books/:id',
@@ -26,6 +26,14 @@ function Router() {
         },
       ],
     },
+    {
+      path: '/signup',
+      element: <Signup />,
+    },
+    {
+      path: '/login',
+      element: <Login />,
+    }
   ]);
 
   return <RouterProvider router={router} />;
