@@ -1,6 +1,6 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import Signup from './pages/Signup';
-import Login from './pages/Login';
+import Signup from 'pages/Signup';
+import Login from 'pages/Login';
 import Home from 'pages/Home';
 import BookDetails from 'pages/BookDetails';
 import DashboardLayout from 'layouts/DashboardLayout';
@@ -33,7 +33,7 @@ function Router() {
     {
       path: '/login',
       element: <Login />,
-    }
+    },
   ]);
 
   return <RouterProvider router={router} />;
