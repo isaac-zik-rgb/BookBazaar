@@ -179,6 +179,33 @@ GET  http://127.0.0.1:8000/api/v1/books/3/like/3/
 
 
 
+
+# ADD BOOK TO CART
+###
+POST  http://127.0.0.1:8000/api/v1/cart/3/add/
+Content-Type: application/json
+Authorization: Token a09a7ff6dd93b080d1c8301a2d356e6b10328495
+
+{
+    "quantity": 2,
+    "price": 2000,
+    "total": 4000,
+    "book": 3,
+    "user": 7,
+    "status": "pending",
+    "payment_status": "pending",
+    "payment_type": "card"
+}
+
+
+
+
+
+
+
+
+
+
 a09a7ff6dd93b080d1c8301a2d356e6b10328495 // bright token
 2cbc8c56f652956f110354032988f19eaf9a3af0 // wisdom token
 ea8b5e6b987b0108c398fff11a1a97e3f680b4f4 //chuks token

@@ -114,7 +114,7 @@ class Like(models.Model):
 class Cart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     books = models.ManyToManyField(Book, through='CartItem')
-
+   
 
     def __str__(self):
         return f'{self.user} added {self.book} to cart'

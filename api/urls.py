@@ -71,7 +71,7 @@ urlpatterns = [
   # for Cart
   path('cart/', CartViewSet.as_view({'get': 'list', 'post': 'create'}), name='cart'),
   path('cart/<int:pk>/', CartViewSet.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'}), name='cart-detail'),
-  path('cart/<int:cart_id>/add/', CartItemViewSet.as_view({'post': 'create'}), name='add-to-cart'),
+  path('cart/<int:book_id>/add/', CartItemViewSet.as_view({'post': 'create'}), name='add-to-cart'),
   path('cart/<int:cart_id>/remove/', CartItemViewSet.as_view({'delete': 'destroy'}), name='remove-from-cart'),
   path('cart/<int:cart_id>/items/', CartItemViewSet.as_view({'get': 'list'}), name='cart-items'),
   
@@ -81,7 +81,7 @@ urlpatterns = [
   path('order/<int:order_id>/add/', OrderItemViewSet.as_view({'post': 'create'}), name='add-to-order'),
   path('order/<int:order_id>/remove/', OrderItemViewSet.as_view({'delete': 'destroy'}), name='remove-from-order'),
   path('order/<int:order_id>/items/', OrderItemViewSet.as_view({'get': 'list'}), name='order-items'),
-  
+
 
   path('', include(router.urls)),
 ]

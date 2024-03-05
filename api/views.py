@@ -354,11 +354,11 @@ class CartViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         # Filter queryset to only include cart owned by the current user
-        return Cart.objects.filter(user=self.request.user.profile)
+        return Cart.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
         # Set the owner of the cart to the current user
-        serializer.save(user=self.request.user.profile)
+        serializer.save(user=self.request.user)
     
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -375,9 +375,8 @@ class CartItemViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]  # Only authenticated users can access
 
     def get_queryset(self):
-        # Filter queryset to only include cart items owned by the current user
+        # Filter queryset to only include cart items owned by the current us
         return CartItem.objects.filter(cart__user=self.request.user.profile)
-
     def perform_create(self, serializer):
         # Set the owner of the cart item to the current user
         serializer.save(cart__user=self.request.user.profile)
