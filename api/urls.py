@@ -42,13 +42,13 @@ urlpatterns = [
 
   path('books/<int:book_id>/like/', BookInteractionViewSet.as_view({'post': 'create_like', 'get': 'list_likes'}), name='like'),
   path('books/<int:book_id>/like/<int:like_id>/', BookInteractionViewSet.as_view({'delete': 'delete_like', 'get': 'retrieve_like'}), name='like'),
-  
+
   #========================================================================================================================================================================================================
   # api endpoint for all followers
   path('authors/<int:author_id>/follow/', BookInteractionViewSet.as_view({'post': 'follow_author'}), name='follow_author'),
   path('authors/<int:author_id>/followers/', BookInteractionViewSet.as_view({'get': 'list_followers'}), name='list_followers'),
   path('authors/<int:author_id>/unfollow/', BookInteractionViewSet.as_view({'delete': 'delete_follow'}), name='delete_follow'),
-  path('books/<int:book_id>/like/', BookInteractionViewSet.as_view({'get': 'list_likes'}), name='list_likes'),
+ 
   
   #========================================================================================================================================================================================================
   # api endpoint for all comments

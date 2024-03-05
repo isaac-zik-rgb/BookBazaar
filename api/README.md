@@ -75,3 +75,22 @@
 # Reviews
 # - /api/v1/books/review/ [POST] (Protected) (Requires authentication)
 # - /api/v1/books/<int:book_id>/reviews/ [PUT] (Protected) (Requires authentication)
+# - api/v1/books/<int:book_id>/reviews/ [GET] list all books for book id
+# - api/v1/books/<int:book_id>/reviews/<int:review_id>/ [DELETE] (prctected) (Require authentication) delete a review
+
+# Comments
+# - api/v1/books/comment/ [POST] (Protected) (Require authentication) post comment for a book
+# - api/v1/books/<int:book_id>/comments/ [GET] list all coments for a particular book
+# - api/v1/books/<int:book_id>/comments/<int:comment_id>/ [DELETE] (proctected) (Require authentication) delete a comment for a book
+# - api/v1/books/<int:book_id>/comments/<int:comment_id> [PUT] (proctected) (require authentication) update a comment for a book
+
+# Followers endpoint
+# - api/v1/authors/<int:author_id>/follow/ [POST] (protected) (Require authentication) follow an author
+# - api/v1/authors/<int:author_id>/followers/ [GET] list followers for a particular author
+# - api/v1/authors/<int:author_id>/unfollow/ [DELETE] (protected) (Require authentication) unfollow a user
+
+# Likes
+# - api/v1/books/<int:book_id>/like/ [POST] [GET] (protected) (Require authentication) post a like for a book
+# - api/v1/books/<int:book_id>/like/<int:like_id>/ [DELETE] [GET] (protected) (Require Authentication) unlike a book and also get a like for a particular id
+
+
