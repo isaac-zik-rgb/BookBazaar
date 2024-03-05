@@ -1,8 +1,7 @@
-import React from 'react'
 import './Profile.css'
 import profile_icon from '../Assets/Profileimage.png'
 
-export const Profile = () => {
+const Profile = () => {
   return (
     <div className='container'>
         <div className='header_image'>
@@ -10,7 +9,7 @@ export const Profile = () => {
         </div>
         <div className='form'>
             <form>
-            <label for="firstname">First Name</label> 
+            <label htmlFor="firstname">First Name</label> 
                     <input 
                         type="text"
                         name="firstname"
@@ -19,7 +18,7 @@ export const Profile = () => {
                         required 
                     /> 
                     <br /><br /> 
-                    <label for="lastname">Last Name</label> 
+                    <label htmlFor="lastname">Last Name</label> 
                     <input 
                         type="text"
                         name="lastname"
@@ -28,7 +27,7 @@ export const Profile = () => {
                         required 
                     /> 
                     <br /><br /> 
-                    <label for="username">Username</label> 
+                    <label htmlFor="username">Username</label> 
                     <input 
                         type="text"
                         name="username"
@@ -37,7 +36,7 @@ export const Profile = () => {
                         required 
                     /> 
                     <br /><br /> 
-                    <label for="email">Enter Email </label> 
+                    <label htmlFor="email">Enter Email </label> 
                     <input 
                         type="email"
                         name="email"
@@ -46,7 +45,7 @@ export const Profile = () => {
                         required
                     />
                     <br /><br /> 
-                    <label for="phone_number">Contact</label> 
+                    <label htmlFor="phone_number">Contact</label> 
                     <input 
                         type="phone_number"
                         name="phone_number"
@@ -55,7 +54,7 @@ export const Profile = () => {
                         required 
                     /> 
                     <br /><br /> 
-                    <label for="address">Enter Address </label> 
+                    <label htmlFor="address">Enter Address </label> 
                     <input 
                         type="address"
                         name="address"
@@ -64,7 +63,7 @@ export const Profile = () => {
                         required
                     />
                     <br /><br /> 
-                    <label for="favorite_genres">Enter Favorite genres </label> 
+                    <label htmlFor="favorite_genres">Enter Favorite genres </label> 
                     <input 
                         type="favorite_genres"
                         name="favorite_genres"
@@ -73,7 +72,7 @@ export const Profile = () => {
                         required
                     />
                     <br /><br /> 
-                    <label for="bio">Enter Bio </label> 
+                    <label htmlFor="bio">Enter Bio </label> 
                     <textarea></textarea>
                     <br /><br /> 
                     <div className='submit'> 
@@ -85,3 +84,5 @@ export const Profile = () => {
     </div>
   )
 }
+
+export default Profile;
