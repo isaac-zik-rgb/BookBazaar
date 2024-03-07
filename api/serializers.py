@@ -6,8 +6,8 @@ from rest_framework import status
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
 import re
-from .models import Follow, Book, Review, Comment, Like, Cart, CartItem, Order, OrderItem
-
+from .models import Follow, Book, Review, Comment, Like, CartItem, Order
+import datetime
 #Serializer to Get User Details using Django Token Authentication
 class UserSerializer(serializers.ModelSerializer):
   class Meta:
@@ -168,35 +168,58 @@ class LikeSerializer(serializers.ModelSerializer):
 
 
 # Serializer for Book Cart Model
-class CartSerializer(serializers.ModelSerializer):
-  user = serializers.ReadOnlyField(source='user.username')
-  class Meta:
-    model = Cart
-    fields = ['id', 'user', 'books']
-    read_only_fields = ['user']  # Ensure this field is read-only
-  
-
-# Serializer for Cart Item Model
 class CartItemSerializer(serializers.ModelSerializer):
-  book = serializers.ReadOnlyField(source='book.title')
-  cart = serializers.ReadOnlyField(source='cart.id')
-  class Meta:
-    model = CartItem
-    fields = ['id', 'book', 'cart', 'quantity']
+    book_title = serializers.CharField(source='book.title', read_only=True)
 
-# Serializer for Order Model
+    class Meta:
+        model = CartItem
+        fields = ['id', 'book_title', 'quantity']
+
 class OrderSerializer(serializers.ModelSerializer):
-  user = serializers.ReadOnlyField(source='user.username')
-  class Meta:
-    model = Order
-    fields = ['id', 'user', 'books', 'ordered_on', 'total']
-    read_only_fields = ['user', 'ordered_on', 'total']  # Ensure these fields are read-only
+    items = serializers.SerializerMethodField()
+    user = serializers.ReadOnlyField(source='user.username')
+    def get_items(self, instance):
+        items = instance.items.all()
+        return CartItemSerializer(items, many=True).data
+    class Meta:
+        model = Order
+        fields = ['id', 'user', 'items', 'total_price', 'created_at']
 
-# Serializer for Order Item Model
-class OrderItemSerializer(serializers.ModelSerializer):
-  book = serializers.ReadOnlyField(source='book.title')
-  order = serializers.ReadOnlyField(source='order.id')
-  class Meta:
-    model = OrderItem
-    fields = ['id', 'book', 'order', 'quantity']
-    read_only_fields = ['order']  # Ensure this field is read-only
+
+
+        # Serializer for strip integration
+def check_expirry_month(value):
+   if not re.match(r'^[0-9]{2}$', value):
+       raise serializers.ValidationError('Invalid expiry month')
+  
+def check_expirry_year(value):
+   today = datetime.datetime.now()
+   if not int(value) >= today.year:
+       raise serializers.ValidationError('Invalid expiry year')
+   
+def check_cvv(value):
+   if not 3 <= len(value) <= 4:
+       raise serializers.ValidationError('Invalid cvv')
+   
+def check_payment_method(value):
+   if value not in ['card', 'paypal']:
+       raise serializers.ValidationError('Invalid payment method')
+
+class PaymentSerializer(serializers.Serializer):
+    payment_method = serializers.CharField(validators=[check_payment_method])
+    payment_method_id = serializers.CharField()  # Add this field for payment method ID
+    card_number = serializers.CharField()
+    expiry_month = serializers.CharField(validators=[check_expirry_month])
+    expiry_year = serializers.CharField(validators=[check_expirry_year])
+    cvv = serializers.CharField(validators=[check_cvv])
+    amount = serializers.DecimalField(max_digits=10, decimal_places=2)
+    currency = serializers.CharField()
+    description = serializers.CharField()
+    order_id = serializers.IntegerField()
+    user = serializers.ReadOnlyField(source='user.username')
+
+    def create(self, validated_data):
+        return validated_data
+
+    def update(self, instance, validated_data):
+        return instance

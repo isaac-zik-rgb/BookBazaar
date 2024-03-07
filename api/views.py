@@ -1,5 +1,6 @@
 
 from django.db.models import Q
+from django.forms import ValidationError
 from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -8,15 +9,15 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated 
 from rest_framework import generics, status
 from drf_yasg.utils import swagger_auto_schema
-from .models import UserProfile, Book, Follow, Review, Comment, Like, Cart, CartItem, Order, OrderItem
+from .models import UserProfile, Book, Follow, Review, Comment, Like, Cart, CartItem, Order
 from .permissions import IsUserProfileOwnerOrReadOnly, IsOwnerOrReadOnly, IsCommentOwnerOrBookOwner
 from rest_framework import viewsets, permissions
-from .serializers import CommentSerializer, LikeSerializer, CartSerializer, CartItemSerializer, OrderSerializer, OrderItemSerializer
+from .serializers import CommentSerializer, LikeSerializer,  CartItemSerializer, OrderSerializer
 from rest_framework import status
 from django.core.paginator import Paginator
 from api.notification.signals import user_registered, user_followed, book_liked, book_commented
-
-
+from django.db import transaction
+from .serializers import PaymentSerializer
 
 
 
@@ -342,98 +343,165 @@ class BookInteractionViewSet(viewsets.ViewSet):
             return Response({'error': "Like not found for that book"}, status=status.HTTP_404_NOT_FOUND)
 
 
+class AddToCartAPIView(APIView):
+    permission_classes = [IsAuthenticated]
 
-# Views for Cart and CartItem
-class CartViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows cart to be viewed or edited.
-    """
-    queryset = Cart.objects.all()
-    serializer_class = CartSerializer
-    permission_classes = [permissions.IsAuthenticated]  # Only authenticated users can access
+    def post(self, request, book_id):
+        user = request.user
+        quantity = request.data.get('quantity', 1)
+        
+        # Ensure quantity is a valid integer
+        try:
+            quantity = int(quantity)
+            if quantity <= 0:
+                raise ValueError("Quantity must be a positive integer")
+        except ValueError:
+            raise ValidationError({"error": "Invalid quantity"})
+        
+        try:
+            book = Book.objects.get(pk=book_id)
+        except Book.DoesNotExist:
+            return Response({"error": "Book not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        cart, created = Cart.objects.get_or_create(user=user)
+        cart_item, created = CartItem.objects.get_or_create(cart=cart, book=book)
 
-    def get_queryset(self):
-        # Filter queryset to only include cart owned by the current user
-        return Cart.objects.filter(user=self.request.user.profile)
+        cart_item.quantity += quantity - 1
+        cart_item.save()
+        
+        serializer = CartItemSerializer(cart_item)
+        return Response(serializer.data)
 
-    def perform_create(self, serializer):
-        # Set the owner of the cart to the current user
-        serializer.save(user=self.request.user.profile)
+class ViewCartAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        user = request.user
+        try:
+            cart = Cart.objects.get(user=user)
+        except Cart.DoesNotExist:
+            return Response({"error": "Cart not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = CartItemSerializer(cart.items.all(), many=True)
+        return Response(serializer.data)
+
+class UpdateCartAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        user = request.user
+        try:
+            cart = Cart.objects.get(user=user)
+        except Cart.DoesNotExist:
+            return Response({"error": "Cart not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        data = request.data
+        for item_data in data:
+            try:
+                cart_item = CartItem.objects.get(pk=item_data['id'], cart=cart)
+            except CartItem.DoesNotExist:
+                return Response({"error": f"CartItem with ID {item_data['id']} not found in the cart"}, status=status.HTTP_404_NOT_FOUND)
+            
+            cart_item.quantity = item_data['quantity']
+            
+            cart_item.save()
+        
+        return Response("Cart updated successfully")
+
+class CreateOrderAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    quueryset = Order.objects.all()
+    def post(self, request):
+        user = request.user
+        try:
+            cart_item = CartItem.objects.filter(cart__user=user)
+            
+            print(cart_item)
+        except CartItem.DoesNotExist:
+            return Response({"error": "Cart items not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        total_price = sum(item.get_total_price() for item in cart_item)
+
+        try:
+            with transaction.atomic():
+                order = Order.objects.create(user=user, total_price=total_price)
+                order.items.set(cart_item)
+                order.save()
+                # Clear cart items after creating the order 
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+       
+        serializer = OrderSerializer(order)
+        return Response(serializer.data)
     
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        self.perform_destroy(instance)
-        return Response({"message": f"Cart '{instance.id}' has been deleted."}, status=status.HTTP_204_NO_CONTENT)
+    def delete(self, request):
+        user = request.user
+        try:
+            cart_item = CartItem.objects.filter(cart__user=user)
+        except Exception as e:
+            return Response({"message": "No cart found in the database"})
+        cart_item.delete()
+        return Response({"Message": "cart item deleted successfully"})
 
+class ViewOrderHistoryAPIView(APIView):
+    permission_classes = [IsAuthenticated]
 
-class CartItemViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows cart items to be viewed or edited.
-    """
-    queryset = CartItem.objects.all()
-    serializer_class = CartItemSerializer
-    permission_classes = [permissions.IsAuthenticated]  # Only authenticated users can access
-
-    def get_queryset(self):
-        # Filter queryset to only include cart items owned by the current user
-        return CartItem.objects.filter(cart__user=self.request.user.profile)
-
-    def perform_create(self, serializer):
-        # Set the owner of the cart item to the current user
-        serializer.save(cart__user=self.request.user.profile)
+    def get(self, request):
+        user = request.user
+        orders = Order.objects.filter(user=user)
+        serializer = OrderSerializer(orders, many=True)
+        if not serializer.data:
+            return Response({"message": "No orders found."}, status=status.HTTP_404_NOT_FOUND)
+        return Response(serializer.data)
     
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        self.perform_destroy(instance)
-        return Response({"message": f"Cart item '{instance.id}' has been deleted."}, status=status.HTTP_204_NO_CONTENT)
-    
-    def perform_destroy(self, instance):
-        instance.delete()
+    def delete(self, request):
+        user = request.user
+        try:
+            orders = Order.objects.filter(user=user)
+            orders.delete()
+        except Order.DoesNotExist:
+            return Response({"error": "Orders not found"}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"message": "Order history has been deleted."}, status=status.HTTP_204_NO_CONTENT)
 
 
-# Views for Order and OrderItem
-class OrderViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows orders to be viewed or edited.
-    """
-    queryset = Order.objects.all()
-    serializer_class = OrderSerializer
-    permission_classes = [permissions.IsAuthenticated]  # Only authenticated users can access
+# views for Sttrip payment
+import stripe
+from django.conf import settings
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
-    def get_queryset(self):
-        # Filter queryset to only include orders owned by the current user
-        return Order.objects.filter(user=self.request.user.profile)
+class PaymentAPI(APIView):
+    serializer_class = PaymentSerializer
+    permission_classes = [IsAuthenticated]
 
-    def perform_create(self, serializer):
-        # Set the owner of the order to the current user
-        serializer.save(user=self.request.user.profile)
-    
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        self.perform_destroy(instance)
-        return Response({"message": f"Order '{instance.id}' has been deleted."}, status=status.HTTP_204_NO_CONTENT)
+    def post(self, request):
+        user = request.user
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            data_dict = serializer.validated_data
+            try:
+                order = Order.objects.get(user=user)
+                total_price = order.total_price
+                amount_in_cents = int(total_price * 100)  # Convert to cents
 
+                payment_intent = stripe.PaymentIntent.create(
+                    amount=amount_in_cents,
+                    currency='usd',
+                    payment_method=data_dict.get('payment_method_id'),
+                    confirm=True,
+                    return_url='https://example.com/return',
+                )
 
-class OrderItemViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows order items to be viewed or edited.
-    """
-    queryset = OrderItem.objects.all()
-    serializer_class = OrderItemSerializer
-    permission_classes = [permissions.IsAuthenticated]  # Only authenticated users can access
-
-    def get_queryset(self):
-        # Filter queryset to only include order items owned by the current user
-        return OrderItem.objects.filter(order__user=self.request.user.profile)
-
-    def perform_create(self, serializer):
-        # Set the owner of the order item to the current user
-        serializer.save(order__user=self.request.user.profile)
-    
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        self.perform_destroy(instance)
-        return Response({"message": f"Order item '{instance.id}' has been deleted."}, status=status.HTTP_204_NO_CONTENT)
-    
-    def perform_destroy(self, instance):
-        instance.delete()
+                if payment_intent.status == 'succeeded':
+                    response_data = {
+                        'message': "Payment successful",
+                        'status': status.HTTP_200_OK,
+                        'payment_intent': payment_intent,
+                    }
+                    return Response(response_data, status=status.HTTP_200_OK)
+                else:
+                    error_message = "Payment failed"
+            except stripe.error.StripeError as e:
+                error_message = str(e)
+            except Order.DoesNotExist:
+                return Response({"Error": "Order not found"}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            error_message = serializer.errors
+        return Response({'error': error_message}, status=status.HTTP_400_BAD_REQUEST)

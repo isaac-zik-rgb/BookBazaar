@@ -112,41 +112,31 @@ class Like(models.Model):
 
 # Model for cart books
 class Cart(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    books = models.ManyToManyField(Book, through='CartItem')
-
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{self.user} added {self.book} to cart'
+        return f"Cart for {self.user.username}"
+
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, related_name='items', on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
     
 
-# Model for cart items
-class CartItem(models.Model):
-    book = models.ForeignKey(Book, on_delete=models.CASCADE)
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(default=1)
-
     def __str__(self):
-        return f'{self.book} added to cart'
+        return f"{self.quantity} x {self.book.title} in cart for {self.cart.user.username}"
 
-# Model to store user orders
+    def get_total_price(self):
+        return self.book.price * self.quantity
+
 class Order(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    books = models.ManyToManyField(Book, through='OrderItem')
-    ordered_on = models.DateTimeField(auto_now_add=True)
-    total = models.DecimalField(max_digits=10, decimal_places=2)
+    user = models.ForeignKey(User, related_name='orders', on_delete=models.CASCADE)
+    items = models.ManyToManyField(CartItem, related_name='orders')
+    total_price = models.DecimalField(max_digits=10, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'{self.user} ordered {self.books}'
-
-# Model to store order items
-class OrderItem(models.Model):
-    book = models.ForeignKey(Book, on_delete=models.CASCADE)
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(default=1)
-
-    def __str__(self):
-        return f'{self.book} ordered'
+        return f"Order for {self.user.username} at {self.created_at}"
 
 # Model to store user notifications
 class Notification(models.Model):
