@@ -23,6 +23,9 @@ export enum PAGES_URL {
   ABOUT = '/about',
   LOGIN = '/login',
   SIGNUP = '/signup',
+  DASHBOARD = '/dashboard',
+  BOOKS_MANAGEMENT = `${PAGES_URL.DASHBOARD}/books-management`,
+  PROFILE = `${PAGES_URL.DASHBOARD}/profile`,
 }
 
 export const NavMenu = [
@@ -31,11 +34,11 @@ export const NavMenu = [
     url: PAGES_URL.HOME,
   },
   {
-    title: 'Whishlist',
-    url: PAGES_URL.WISHLIST,
+    title: 'Dashboard',
+    url: PAGES_URL.BOOKS_MANAGEMENT,
   },
   {
-    title: 'About',
-    url: PAGES_URL.ABOUT,
+    title: 'Profile',
+    url: PAGES_URL.PROFILE,
   },
 ];

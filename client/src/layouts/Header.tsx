@@ -32,7 +32,7 @@ const Header = () => {
         <Link to={PAGES_URL.LOGIN}>
           <Button className="border border-white text-white">LOGIN</Button>
         </Link>
-        <Link to={PAGES_URL.LOGIN}>
+        <Link to={PAGES_URL.SIGNUP}>
           <Button className="bg-white py-2.5 whitespace-nowrap text-black">
             SIGN UP
           </Button>

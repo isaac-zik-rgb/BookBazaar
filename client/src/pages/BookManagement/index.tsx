@@ -35,7 +35,7 @@ const BookManagement = () => {
   function AddBookModal() {
     const [isLoading, setIsLoading] = useState(false);
     const [previewPdf, setPreviewPdf] = useState(null);
-    const [previewImage, setPreviewImage] = useState(null);
+    const [previewImage, setPreviewImage] = useState<string | null>(null);
     const {
       register,
       handleSubmit,
@@ -63,6 +63,7 @@ const BookManagement = () => {
       if (file) {
         setPreviewImage(URL.createObjectURL(file));
         setValue('coverPhoto', file);
+
       }
     };
 
