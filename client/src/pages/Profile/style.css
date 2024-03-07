@@ -4,13 +4,13 @@
     margin: auto;
     margin-top: 50px;
     width: 600px;
-    background: #fff;
     justify-content: center;
     align-items: center;
 }
 
 .header_image img {
     border-radius: 50%;
+    height: 190px;
 }
 
 .form label {
@@ -22,13 +22,13 @@
 .form input {
     width: 400px;
     height: 30px;
-    border-radius: 5%;
-}
+    border: 1px solid black;
+}    
 
 textarea {
     width: 400px;
-    height: 120px;
-    border-radius: 5%;
+    height: 130px;
+    border: 1px solid black;
 }
 
 .submit {
