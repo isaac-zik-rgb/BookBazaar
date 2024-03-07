@@ -12,6 +12,7 @@ const validationSchema = yup.object().shape({
   title: yup.string().required('Title is required'),
   authorName: yup.string().required('Author name is required'),
   coverPhoto: yup.mixed().required('Cover photo is required'),
+  bookPdf: yup.mixed().required('Book PDF is required'),
 });
 
 const BookManagement = () => {
@@ -33,31 +34,45 @@ const BookManagement = () => {
 
   function AddBookModal() {
     const [isLoading, setIsLoading] = useState(false);
+    const [previewPdf, setPreviewPdf] = useState(null);
     const [previewImage, setPreviewImage] = useState(null);
-  const { register, handleSubmit, formState: { errors }, setValue } = useForm({
-    resolver: yupResolver(validationSchema),
-  });
+    const {
+      register,
+      handleSubmit,
+      formState: { errors },
+      setValue,
+    } = useForm({
+      resolver: yupResolver(validationSchema),
+    });
 
-  const onSubmit = async (data: any) => {
-    setIsLoading(true);
-    try {
-      console.log('data', data);
-      
-      setIsLoading(false);
-      handleClose(); // Close the modal after successful submission
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      setIsLoading(false);
-    }
-  };
+    const onSubmit = async (data: any) => {
+      setIsLoading(true);
+      try {
+        console.log('data', data);
 
-  const handleFileChange = (event: any) => {
-    const file = event.target.files[0];
-    if (file) {
-      setPreviewImage(URL.createObjectURL(file));
-      setValue('coverPhoto', file);
-    }
-  };
+        setIsLoading(false);
+        handleClose(); // Close the modal after successful submission
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        setIsLoading(false);
+      }
+    };
+
+    const handleFileChange = (event: any) => {
+      const file = event.target.files[0];
+      if (file) {
+        setPreviewImage(URL.createObjectURL(file));
+        setValue('coverPhoto', file);
+      }
+    };
+
+    const handlePdfChange = (event: any) => {
+      const file = event.target.files[0];
+      if (file) {
+        setPreviewPdf(file.name);
+        setValue('bookPdf', file);
+      }
+    };
 
     return (
       <>
@@ -88,7 +103,7 @@ const BookManagement = () => {
                     <div className="sm:col-span-3">
                       <label
                         htmlFor="title"
-                        className="block text-md font-medium leading-6 text-gray-900"
+                        className="text-md block font-medium leading-6 text-gray-900"
                       >
                         Title
                       </label>
@@ -99,13 +114,18 @@ const BookManagement = () => {
                           {...register('title')}
                           className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         />
+                        {errors.title && (
+                          <p className="mt-1 text-red-500">
+                            {errors.title.message}
+                          </p>
+                        )}
                       </div>
                     </div>
 
                     <div className="sm:col-span-3">
                       <label
                         htmlFor="author"
-                        className="block text-md font-medium leading-6 text-gray-900"
+                        className="text-md block font-medium leading-6 text-gray-900"
                       >
                         Author
                       </label>
@@ -116,13 +136,18 @@ const BookManagement = () => {
                           {...register('authorName')}
                           className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         />
+                        {errors.authorName && (
+                          <p className="mt-1 text-red-500">
+                            {errors.authorName.message}
+                          </p>
+                        )}
                       </div>
                     </div>
 
                     <div className="col-span-full">
                       <label
                         htmlFor="about"
-                        className="block text-md font-medium leading-6 text-gray-900"
+                        className="text-md block font-medium leading-6 text-gray-900"
                       >
                         Description
                       </label>
@@ -141,43 +166,98 @@ const BookManagement = () => {
                     </div>
 
                     <div className="col-span-full">
-                    <label htmlFor="cover-photo" className="block text-md font-medium leading-6 text-gray-900">
-                      Cover photo <p className="text-xs inline-flex mt-1 text-gray-600">(PNG, JPG, GIF up to 10MB)</p>
-                    </label>
-                    <div className="mt-2">
-                      {previewImage && (
-                        <img src={previewImage} alt="Cover Preview" className="mx-auto rounded-lg h-40" />
-                      )}
-                      <div className="flex items-center justify-center mt-2">
-                        <label
-                          htmlFor="file-upload"
-                          className="cursor-pointer bg-white font-semibold text-indigo-600 py-2 px-4 border border-indigo-600 rounded-md hover:bg-indigo-600 hover:text-white"
+                      <label
+                        htmlFor="cover-photo"
+                        className="text-md block font-medium leading-6 text-gray-900"
+                      >
+                        Cover photo{' '}
+                        <p className="mt-1 inline-flex text-xs text-gray-600">
+                          (PNG, JPG, GIF up to 10MB)
+                        </p>
+                      </label>
+                      <div className="mt-2">
+                        {previewImage && (
+                          <img
+                            src={previewImage}
+                            alt="Cover Preview"
+                            className="mx-auto h-40 rounded-lg"
+                          />
+                        )}
+                        <div className="mt-2 flex items-center justify-center">
+                          <label
+                            htmlFor="file-upload"
+                            className="cursor-pointer rounded-md border border-indigo-600 bg-white px-4 py-2 font-semibold text-indigo-600 hover:bg-indigo-600 hover:text-white"
+                          >
+                            {previewImage
+                              ? 'Change Cover Photo'
+                              : 'Upload Cover Photo'}
+                          </label>
+                          <input
+                            id="file-upload"
+                            name="coverPhoto"
+                            type="file"
+                            onChange={handleFileChange}
+                            className="sr-only"
+                          />
+                        </div>
+                        {errors.coverPhoto && (
+                          <p className="mt-1 text-red-500">
+                            {errors.coverPhoto.message}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="col-span-full">
+                      <label
+                        htmlFor="book_file"
+                        className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                      >
+                        Upload Book PDF{' '}
+                        <div
+                          className="mt-1 inline-flex text-sm text-gray-500 dark:text-gray-300"
+                          id="user_avatar_help"
                         >
-                          Upload Cover Photo
+                          (PDF format only, up to 10MB)
+                        </div>
+                      </label>
+                      <div className="mt-2 flex items-center justify-start">
+                        <label
+                          htmlFor="book-file-upload"
+                          className="cursor-pointer rounded-md border border-indigo-600 bg-white px-4 py-2 font-semibold text-indigo-600 hover:bg-indigo-600 hover:text-white"
+                        >
+                          {previewPdf
+                            ? 'Change Book File'
+                            : 'Upload Book File'}
                         </label>
                         <input
-                          id="file-upload"
+                          id="book-file-upload"
                           name="coverPhoto"
                           type="file"
-                          onChange={handleFileChange}
+                          onChange={handlePdfChange}
                           className="sr-only"
                         />
+                        {previewPdf && (
+                          <p className="mt-2 text-xl ml-4 text-gray-600">
+                            {previewPdf}
+                          </p>
+                        )}
                       </div>
-                      {errors.coverPhoto && (
-                        <p className="text-red-500 mt-1">{errors.coverPhoto.message}</p>
+                      {errors.bookPdf && (
+                        <p className="mt-1 text-red-500">
+                          {errors.bookPdf.message}
+                        </p>
                       )}
                     </div>
                   </div>
-                  </div>
                 </div>
-            <div className="flex justify-end gap-5">
-              <Button variant="outlined" onClick={handleClose}>
-                Cancel
-              </Button>
-              <Button type="submit" variant="solid">
-                Save
-              </Button>
-            </div>
+                <div className="flex justify-end gap-5">
+                  <Button variant="outlined" onClick={handleClose}>
+                    Cancel
+                  </Button>
+                  <Button type="submit" variant="solid">
+                    Save
+                  </Button>
+                </div>
               </div>
             </form>
           </div>
