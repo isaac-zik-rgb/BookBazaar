@@ -142,11 +142,11 @@ const BookManagement = () => {
 
                     <div className="col-span-full">
                     <label htmlFor="cover-photo" className="block text-md font-medium leading-6 text-gray-900">
-                      Cover photo
+                      Cover photo <p className="text-xs inline-flex mt-1 text-gray-600">(PNG, JPG, GIF up to 10MB)</p>
                     </label>
                     <div className="mt-2">
                       {previewImage && (
-                        <img src={previewImage} alt="Cover Preview" className="mx-auto h-40" />
+                        <img src={previewImage} alt="Cover Preview" className="mx-auto rounded-lg h-40" />
                       )}
                       <div className="flex items-center justify-center mt-2">
                         <label
@@ -163,7 +163,6 @@ const BookManagement = () => {
                           className="sr-only"
                         />
                       </div>
-                      <p className="text-xs mt-1 text-gray-600">PNG, JPG, GIF up to 10MB</p>
                       {errors.coverPhoto && (
                         <p className="text-red-500 mt-1">{errors.coverPhoto.message}</p>
                       )}

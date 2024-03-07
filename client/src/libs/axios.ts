@@ -10,7 +10,7 @@ import {
   storeRefreshToken,
   storeAccessToken,
 } from "utils";
-import { API_BASE_URL } from "configs/constants";
+import { API_BASE_URL } from "configs";
 
 interface CustomAxiosRequestConfig extends AxiosRequestConfig {
   _retry?: boolean;
