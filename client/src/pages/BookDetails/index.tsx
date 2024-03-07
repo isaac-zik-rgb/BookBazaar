@@ -7,7 +7,7 @@ import BookCard from 'components/BookCard';
 import { books } from 'data/bookList';
 import { useParams } from 'react-router-dom';
 
-type Book = (typeof books)[0];
+export type Book = (typeof books)[0];
 
 const BookDetails = () => {
   const { id } = useParams<{ id: string }>();

@@ -121,3 +121,6 @@ export const books = [
       'Witness the psychological turmoil of Rodion Raskolnikov, a young ex-law student who commits a heinous crime and grapples with its consequences.',
   },
 ];
+
+export default books;
+
