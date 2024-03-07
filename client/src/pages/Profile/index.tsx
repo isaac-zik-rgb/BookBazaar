@@ -1,11 +1,11 @@
 import './style.css'
-// import profile_icon from 'assets/Profileimage.png'
+import profile_icon from 'assets/profileimage.png'
 
 const Profile = () => {
   return (
     <div className='container'>
         <div className='header_image'>
-            <img src={'profile_icon'} alt=''/>
+            <img src={profile_icon} alt=''/>
         </div>
         <div className='form'>
             <form>
