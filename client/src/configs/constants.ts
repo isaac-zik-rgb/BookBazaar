@@ -42,3 +42,22 @@ export const NavMenu = [
     url: PAGES_URL.PROFILE,
   },
 ];
+
+export const Genres = [
+  { name: 'All', value: 'all' },
+  { name: 'Fiction', value: 'fiction' },
+  { name: 'Non-Fiction', value: 'non-fiction' },
+  { name: 'Science Fiction', value: 'science-fiction' },
+  { name: 'Fantasy', value: 'fantasy' },
+  { name: 'Romance', value: 'romance' },
+  { name: 'Mystery', value: 'mystery' },
+  { name: 'Horror', value: 'horror' },
+  { name: 'Others', value: 'others' },
+];
+
+export enum ENDPOINT {
+  AUTH = "/auth",
+  PROFILE = "/profile",
+  MY_BOOKS = "/books",
+  PUBLIC_BOOKS = "/all-books",
+}

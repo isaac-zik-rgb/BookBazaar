@@ -1,23 +1,31 @@
 import { useState } from 'react';
 import './style.css';
 import '../Signup';
-import { Link } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import email_icon from 'assets/email.png';
 import password_icon from 'assets/password.png';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import useAuth from 'hooks/useAuth';
+import { PAGES_URL } from 'configs/constants';
 
-type LoginDto = {
-  email: string;
+export type LoginDto = {
+  username: string;
   password: string;
 };
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const { signIn, isLoading, isLoggedIn } = useAuth();
+  const navigate = useNavigate();
+  
+  
+  
 
   const schema = yup.object().shape({
-    email: yup
+    username: yup
       .string()
       .required('Email is required')
       .email('Invalid email format'),
@@ -34,12 +42,25 @@ const Login = () => {
 
   const onSubmit = async (data: LoginDto) => {
     setLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      console.log(data); // Here you can perform your login logic
+    setError('');
+    try {
+      await signIn(data);
+      navigate(PAGES_URL.BOOKS_MANAGEMENT)
+    } catch (error: any) {
+      console.log(error);
+      if (error.status === 400) {
+        setError('Invalid email or password');
+      }
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
+
+
+  if (isLoading) {return <div>Loading...</div>
+} else if (isLoggedIn) {
+    return <Navigate to={PAGES_URL.BOOKS_MANAGEMENT} />
+  }
 
   return (
     <div className="container">
@@ -49,17 +70,19 @@ const Login = () => {
       </div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="inputs">
+        {error && <p className="flex self-center text-red-500">{error}</p>}
+
           <div className="input">
             <img src={email_icon} alt="" />
             <input
-              type="email"
+            type='email'
               placeholder="example@john.com"
-              {...register('email')}
+              {...register('username')}
             />
           </div>
 
-          {errors.email && (
-            <p className="-mt-2 text-red-500">{errors.email.message}</p>
+          {errors.username && (
+            <p className="-mt-2 text-red-500">{errors.username.message}</p>
           )}
         </div>
         <div className="inputs">

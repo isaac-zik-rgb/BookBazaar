@@ -6,8 +6,11 @@ import Profile from 'pages/Profile';
 import BookDetails from 'pages/BookDetails';
 import DashboardLayout from 'layouts/DashboardLayout';
 import BookManagement from 'pages/BookManagement';
+import { AuthProvider } from 'contexts';
+import useAuth from 'hooks/useAuth';
 
 function Router() {
+  useAuth();
   const router = createBrowserRouter([
     {
       path: '/',
@@ -25,6 +28,11 @@ function Router() {
           path: 'books-management',
           element: <BookManagement />,
         },
+
+        {
+          path: 'profile',
+          element: <Profile />,
+        },
       ],
     },
     {
@@ -35,13 +43,14 @@ function Router() {
       path: '/login',
       element: <Login />,
     },
-    {
-      path: 'profile',
-      element: <Profile />
-    }
   ]);
 
-  return <RouterProvider router={router} />;
+  return (
+    <AuthProvider>
+      {' '}
+      <RouterProvider router={router} />
+    </AuthProvider>
+  );
 }
 
 export default Router;

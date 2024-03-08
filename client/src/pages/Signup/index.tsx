@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './style.css';
 import user_icon from 'assets/person.png';
 import email_icon from 'assets/email.png';
@@ -7,18 +7,19 @@ import password_icon from 'assets/password.png';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import useAuth from 'hooks/useAuth';
 
-type SignUpDto = {
-  firstName: string;
-  lastName: string;
+export type SignUpDto = {
+  first_name: string;
+  last_name: string;
   email: string;
   password: string;
-  confirmPassword: string;
+  password2: string;
 };
 
 const schema = yup.object().shape({
-  firstName: yup.string().required('First name is required'),
-  lastName: yup.string().required('Last name is required'),
+  first_name: yup.string().required('First name is required'),
+  last_name: yup.string().required('Last name is required'),
   email: yup
     .string()
     .required('Email is required')
@@ -27,7 +28,7 @@ const schema = yup.object().shape({
     .string()
     .required('Password is required')
     .min(6, 'Password must be at least 6 characters'),
-  confirmPassword: yup
+  password2: yup
     .string()
     .required('Confirm password is required')
     .oneOf([yup.ref('password')], 'Passwords must match'),
@@ -35,23 +36,36 @@ const schema = yup.object().shape({
 
 const Signup = () => {
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const { signUp } = useAuth();
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors }, setError, setFocus, reset,
   } = useForm({
     resolver: yupResolver(schema),
   });
 
   const onSubmit = async (data: SignUpDto) => {
-    const form = { ...data, username: data.email };
+    const dataWithUsername = { ...data, username: data.email };
     setLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      console.log(form); // Here you can perform your login logic
+    try {
+      await signUp(dataWithUsername);
+      navigate('/login');
+    } catch (error: any) {
+      if (error.status === 400) {
+        console.log(error.data);
+        setError('email', {
+          type: 'manual',
+          message: error.data.username,
+        });
+        setFocus('email');
+      }
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -67,11 +81,11 @@ const Signup = () => {
             <input
               type="text"
               placeholder="First name"
-              {...register('firstName')}
+              {...register('first_name')}
             />
           </div>
-          {errors.firstName && (
-            <p className="-mt-2 text-red-500">{errors.firstName.message}</p>
+          {errors.first_name && (
+            <p className="-mt-2 text-red-500">{errors.first_name.message}</p>
           )}
         </div>
         <div className="inputs">
@@ -80,17 +94,17 @@ const Signup = () => {
             <input
               type="text"
               placeholder="Last name"
-              {...register('lastName')}
+              {...register('last_name')}
             />
           </div>
-          {errors.lastName && (
-            <p className="-mt-2 text-red-500">{errors.lastName.message}</p>
+          {errors.last_name && (
+            <p className="-mt-2 text-red-500">{errors.last_name.message}</p>
           )}
         </div>
         <div className="inputs">
           <div className="input">
             <img src={email_icon} alt="" />
-            <input type="email" placeholder="Email ID" {...register('email')} />
+            <input type="email" placeholder="Email/Username" {...register('email')} />
           </div>
 
           {errors.email && (
@@ -116,13 +130,13 @@ const Signup = () => {
             <input
               type="password"
               placeholder="Confirm Password"
-              {...register('confirmPassword')}
+              {...register('password2')}
             />
           </div>
 
-          {errors.confirmPassword && (
+          {errors.password2 && (
             <p className="-mt-2 text-red-500">
-              {errors.confirmPassword.message}
+              {errors.password2.message}
             </p>
           )}
         </div>
@@ -130,7 +144,7 @@ const Signup = () => {
           <div className="submit">{loading ? 'Loading...' : 'Sign Up'}</div>
         </button>
 
-        <div className="forgot-password flex flex-col justify-center items-center px-0">
+        <div className="forgot-password flex flex-col items-center justify-center px-0">
           <p>
             Already Registered?{' '}
             <Link className="text-primary hover:underline" to="/login">

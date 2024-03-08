@@ -1,25 +1,17 @@
 import { Button } from 'components/ui';
 import { useCallback } from 'react';
 import { Link } from 'react-router-dom';
+import { BookDto } from 'services/book.service';
 
-type BookCardProps = {
-  id: string;
-  cover: string;
-  title: string;
-  author: string;
-  rate: number;
-  like: number;
-  description: string;
-};
 
 const BookCard = ({
   book,
   featured,
 }: {
-  book: BookCardProps;
+  book: BookDto;
   featured?: boolean;
 }) => {
-  const { cover, title, author, rate, like, description, id } = book;
+  const { book_cover, title, author, reviews_count, liked_count, description, id } = book;
 
   const shortenDescription = useCallback(() => {
     if (description.length > 80) {
@@ -32,18 +24,18 @@ const BookCard = ({
   const href = `/books/${id}`;
 
   return (
-    <Link to={href} className="group relative cursor-pointer transition-shadow">
+    <Link to={href} className="group flex h-full relative cursor-pointer transition-shadow">
       <div className="relative z-10 flex gap-x-9">
-        <div className="shrink-0">
-          <img src={cover} alt="book" />
+        <div className="shrink-0. max-w-[148px] max-h-[226px]">
+          <img className='w-[148px] h-[226px]' src={book_cover} alt="book" />
         </div>
-        <div className="space-y-4">
+        <div className="space-y-4  h-10">
           <h2 className="text-2xl font-medium">{title}</h2>
           <div className="space-y-3">
             <h3>By {author}</h3>
             <div className="flex w-full justify-between text-gray-500">
-              <span>{rate} / 5</span>
-              <span>{like} likes</span>
+              <span>{reviews_count} / 5</span>
+              <span>{liked_count} likes</span>
             </div>
           </div>
           <div className="w-[12.5rem] shrink-0 text-gray-500">
@@ -57,13 +49,13 @@ const BookCard = ({
         </div>
       </div>
       {featured && (
-        <div className="group-hover:border-primary/60. absolute -bottom-6 -right-6 z-0 h-[calc(120%)] w-[90%] rounded border-2 bg-white shadow-md group-hover:shadow-xl" />
+        <div className="absolute -bottom-6 -right-6 z-0 h-[calc(120%)] w-[90%] rounded border-2 bg-white shadow-md group-hover:shadow-xl" />
       )}
     </Link>
   );
 };
 
-const FeaturedBookCard = ({ book }: { book: BookCardProps }) => {
+const FeaturedBookCard = ({ book }: { book: BookDto }) => {
   const { id } = book;
   const href = `/book/${id}`;
   return (
@@ -74,7 +66,7 @@ const FeaturedBookCard = ({ book }: { book: BookCardProps }) => {
       <div className="relative z-10">
         <BookCard featured book={book} />
       </div>
-      <div className="border-primary/20. group-hover:border-primary/60. absolute -bottom-6 -right-6 z-0 h-[calc(120%)] w-[90%] rounded border-2 bg-white shadow-md group-hover:shadow-xl" />
+      <div className="absolute -bottom-6 -right-6 z-0 h-[calc(100%)]. w-[90%] rounded border-2 bg-white shadow-md group-hover:shadow-xl" />
     </Link>
   );
 };

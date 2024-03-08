@@ -9,7 +9,9 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
-import { NavLink, Outlet } from 'react-router-dom';
+import { Link, NavLink, Navigate, Outlet } from 'react-router-dom';
+import useAuth from 'hooks/useAuth';
+import { PAGES_URL } from 'configs/constants';
 
 const navigation = [
   {
@@ -26,10 +28,6 @@ const navigation = [
     current: false,
   },
 ];
-const userNavigation = [
-  { name: 'Your profile', href: 'profile' },
-  { name: 'Sign out', href: '/' },
-];
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
@@ -37,6 +35,15 @@ function classNames(...classes: string[]) {
 
 export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const { logout, userInfo, isLoggedIn, isLoading } = useAuth();
+
+    if (!isLoading && !isLoggedIn) return <Navigate to={PAGES_URL.LOGIN} />
+
+  const userNavigation = [
+    { name: 'Your profile', href: 'profile' },
+    { name: 'Sign out', href: '/', onClick: logout },
+  ];
 
   return (
     <>
@@ -96,7 +103,9 @@ export default function DashboardLayout() {
                   {/* Sidebar component, swap this element with another sidebar if you like */}
                   <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-4">
                     <div className="flex h-16 shrink-0 items-center justify-center">
-                      <h1 className="text-3xl font-bold">Bookbazaar</h1>
+                      <Link to="/" className="text-3xl font-bold">
+                        Bookbazaar
+                      </Link>
                     </div>
                     <nav className="flex flex-1 flex-col">
                       <ul role="list" className="flex flex-1 flex-col gap-y-7">
@@ -139,7 +148,9 @@ export default function DashboardLayout() {
           {/* Sidebar component, swap this element with another sidebar if you like */}
           <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4">
             <div className="flex h-16 shrink-0 items-center justify-center">
-              <h1 className="text-3xl font-bold">Bookbazaar</h1>
+              <Link to="/" className="text-3xl font-bold">
+                Bookbazaar
+              </Link>{' '}
             </div>
             <nav className="flex flex-1 flex-col">
               <ul role="list" className="flex flex-1 flex-col gap-y-7">
@@ -220,7 +231,7 @@ export default function DashboardLayout() {
                         className="ml-4 text-sm font-semibold leading-6 text-gray-900"
                         aria-hidden="true"
                       >
-                        Tom Cook
+                        {userInfo?.first_name} {userInfo?.last_name}
                       </span>
                       <ChevronDownIcon
                         className="ml-2 h-5 w-5 text-gray-400"
@@ -239,7 +250,13 @@ export default function DashboardLayout() {
                   >
                     <Menu.Items className="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
                       {userNavigation.map((item) => (
-                        <Menu.Item key={item.name}>
+                        <button
+                          className="w-full text-left"
+                          onClick={() => {
+                            item.onClick && item.onClick();
+                          }}
+                          key={item.name}
+                        >
                           <NavLink
                             to={item.href}
                             className={({ isActive }) =>
@@ -251,7 +268,7 @@ export default function DashboardLayout() {
                           >
                             {item.name}
                           </NavLink>
-                        </Menu.Item>
+                        </button>
                       ))}
                     </Menu.Items>
                   </Transition>
