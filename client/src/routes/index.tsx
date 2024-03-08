@@ -8,6 +8,8 @@ import DashboardLayout from 'layouts/DashboardLayout';
 import BookManagement from 'pages/BookManagement';
 import { AuthProvider } from 'contexts';
 import useAuth from 'hooks/useAuth';
+import Trades from 'pages/Trades';
+import Conversations from 'pages/Conversations';
 
 function Router() {
   useAuth();
@@ -33,6 +35,14 @@ function Router() {
           path: 'profile',
           element: <Profile />,
         },
+        {
+          path: 'Trades',
+          element: <Trades />,
+        },
+        {
+          path: 'Conversations',
+          element: <Conversations />,
+        }
       ],
     },
     {

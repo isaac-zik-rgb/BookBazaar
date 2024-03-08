@@ -34,10 +34,15 @@ export const addBook = async (payload: CreateBookDto) => {
   });
 };
 
-export const getAllBooks = async (): Promise<AxiosResponse<BookDto[]>> => {
-  return await get(`${ENDPOINT.PUBLIC_BOOKS}/`);
+export const getAllBooks = async ({
+  genre,
+}: {
+  genre?: string;
+}): Promise<AxiosResponse<BookDto[]>> => {
+  if (genre) {
+    return await get(`${ENDPOINT.PUBLIC_BOOKS}/?genre=${genre}`);
+  } else return await get(`${ENDPOINT.PUBLIC_BOOKS}/`);
 };
-
 
 export const getMyBooks = async (): Promise<AxiosResponse<BookDto[]>> => {
   return await get(`${ENDPOINT.MY_BOOKS}/`);
@@ -58,17 +63,15 @@ export const updateBook = async ({
 };
 
 const getBookDetail = async (id: string) => {
-  return await get(`${ENDPOINT.MY_BOOKS}/${id}/`);
+  return await get(`${ENDPOINT.PUBLIC_BOOKS}/${id}/`);
 };
 
 const getBookByGenre = async (genre: string) => {
-  return await get(`${ENDPOINT.MY_BOOKS}/?genre=${genre}`);
+  return await get(`${ENDPOINT.PUBLIC_BOOKS}/?genre=${genre}`);
 };
-
 
 const deleteBook = async (bookId: number) => {
   return await del(`${ENDPOINT.MY_BOOKS}/${bookId}/`);
-}
-
+};
 
 export { getBookDetail, getBookByGenre, deleteBook };

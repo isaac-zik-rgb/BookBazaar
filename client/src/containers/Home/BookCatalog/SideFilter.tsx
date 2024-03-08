@@ -1,10 +1,13 @@
 import { Genres } from 'configs/constants';
-import { NavLink, useLocation } from 'react-router-dom';
+import { useGenre } from 'contexts/GenreContext';
+import { NavLink } from 'react-router-dom';
 
 const SideFilter = () => {
-  const { search } = useLocation();
+  const { selectedGenre, setSelectedGenre } = useGenre(); // Consume the selected genre and its setter from context
 
-  const genre = new URLSearchParams(search).get('genre');
+  const handleGenreClick = (genre: string) => {
+    setSelectedGenre(genre);
+  };
 
   return (
     <div className="w-[15rem] shrink-0 text-2xl">
@@ -13,9 +16,10 @@ const SideFilter = () => {
         {Genres.map((item, index: number) => (
           <NavLink
             key={index}
+            onClick={() => handleGenreClick(item.value)}
             to={`?genre=${item.value}`}
             className={`block rounded-md py-1 pl-8 ${
-              genre === item.value || (!genre && item.value === 'all')
+              selectedGenre === item.value || (!selectedGenre && item.value === 'all')
                 ? 'text-white. bg-primary'
                 : 'hover:bg-primary/30'
             }`}

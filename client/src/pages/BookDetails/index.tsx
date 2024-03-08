@@ -16,9 +16,9 @@ const BookDetails = () => {
   const height = elevatedDivRef.current?.offsetHeight;
   const [bottomElementHeight, setBottomElementHeight] = useState(height);
 
-  useLayoutEffect(() => {
+  useLayoutEffect(() => {    
     setBottomElementHeight(elevatedDivRef.current?.offsetHeight);
-  }, [height, id]);
+  }, [height, book]);
 
   if (!id) return null;
 
@@ -27,7 +27,6 @@ const BookDetails = () => {
       try {
         const book = await getBookDetail(id) as any;
         setBook(book as BookDto);
-        console.log(book);
       } catch (error) {
         console.error(error);
       }

@@ -1,7 +1,7 @@
 // import { AuthUser, BaseUser, CreateUser, LoginDto } from "types";
-import { ENDPOINT } from "configs/constants";
-import { get, patch, post, put } from "libs/axios";
-import { LoginDto } from "pages/Login";
+import { ENDPOINT } from 'configs/constants';
+import { get, post, put } from 'libs/axios';
+import { LoginDto } from 'pages/Login';
 
 export type AuthUser = {
   id: string;
@@ -12,6 +12,8 @@ export type AuthUser = {
   phone: string;
   address: string;
   favorite_genres: string;
+  bio?: string;
+  phone_number: string;
 };
 
 export type BaseUser = {
@@ -38,14 +40,12 @@ export const getMe = async () => {
   return response;
 };
 
-
 export const logout = async () => {
   const response = await post(`${ENDPOINT.AUTH}/logout`, {});
   return response;
-}
-
-export const updateMe = async (payload: Partial<BaseUser>) => {
-  const response = await patch(`${ENDPOINT.AUTH}`, payload);
-  return response;
 };
 
+export const updateMe = async (payload: Partial<AuthUser>) => {
+  const response = await put(`${ENDPOINT.PROFILE}/edit`, payload);
+  return response;
+};

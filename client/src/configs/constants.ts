@@ -44,7 +44,7 @@ export const NavMenu = [
 ];
 
 export const Genres = [
-  { name: 'All', value: 'all' },
+  { name: 'All', value: '' },
   { name: 'Fiction', value: 'fiction' },
   { name: 'Non-Fiction', value: 'non-fiction' },
   { name: 'Science Fiction', value: 'science-fiction' },

@@ -422,6 +422,10 @@ const BookManagement = () => {
                   <th scope="col" className="px-6 py-3">
                     Author
                   </th>
+
+                  <th scope="col" className="px-6 py-3">
+                    Genre
+                  </th>
                   <th scope="col" className="px-6 py-3">
                     Likes
                   </th>
@@ -429,7 +433,7 @@ const BookManagement = () => {
                     Reviews
                   </th>
                   <th scope="col" className="px-6 py-3">
-                    Comments
+                    View
                   </th>
                   <th scope="col" className="px-6 py-3">
                     Action
@@ -458,6 +462,11 @@ const BookManagement = () => {
                       {book.title}
                     </th>
                     <td className="px-6 py-4">{book.author}</td>
+                    <td className="px-6 py-4">
+                      <span className="px-2 py-1 text-xs font-semibold leading-5 text-indigo-800 bg-indigo-100 rounded-full">
+                        {book.genre}
+                      </span>
+                    </td>
                     <td className="px-6 py-4">{book.liked_count}</td>
                     <td className="px-6 py-4">{book.reviews_count}</td>
                     <td className="px-6 py-4">
@@ -465,7 +474,7 @@ const BookManagement = () => {
                         to={`/books/${book.id}#comments`}
                         className="font-medium text-blue-600 hover:underline dark:text-blue-500"
                       >
-                        View Comments
+                        View
                       </Link>
                     </td>
                     <td className="px-6 py-4">

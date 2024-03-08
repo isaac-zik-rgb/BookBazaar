@@ -1,17 +1,15 @@
-import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../contexts/AuthContext";
+import { useContext, useEffect, useState } from 'react';
+import { AuthContext } from '../contexts/AuthContext';
 import {
+  AuthUser,
   BaseUser,
   getMe,
   login,
   register,
-} from "services/user.service";
-import {
-  storeAccessToken,
-  removeAccessToken,
-  getAccessToken,
-} from "../utils";
-import { LoginDto } from "pages/Login";
+  updateMe,
+} from 'services/user.service';
+import { storeAccessToken, removeAccessToken, getAccessToken } from '../utils';
+import { LoginDto } from 'pages/Login';
 
 export const useAuth = () => {
   const { state, dispatch } = useContext(AuthContext);
@@ -20,22 +18,22 @@ export const useAuth = () => {
   useEffect(() => {
     if (token) {
       const verifyToken = async () => {
-        dispatch({ type: "SET_IS_LOADING", status: true });
+        dispatch({ type: 'SET_IS_LOADING', status: true });
         if (token) {
           try {
             await getUser();
           } catch (error) {
             removeAccessToken();
-            dispatch({ type: "SET_AUTH_TOKEN", token: null });
-            dispatch({ type: "SET_IS_LOGGED_IN", status: false });
-            dispatch({ type: "SET_USER_INFO", info: null });
+            dispatch({ type: 'SET_AUTH_TOKEN', token: null });
+            dispatch({ type: 'SET_IS_LOGGED_IN', status: false });
+            dispatch({ type: 'SET_USER_INFO', info: null });
           } finally {
-            dispatch({ type: "SET_IS_LOADING", status: false });
+            dispatch({ type: 'SET_IS_LOADING', status: false });
           }
         } else {
-          dispatch({ type: "SET_IS_LOGGED_IN", status: false });
-          dispatch({ type: "SET_USER_INFO", info: null });
-          dispatch({ type: "SET_IS_LOADING", status: false });
+          dispatch({ type: 'SET_IS_LOGGED_IN', status: false });
+          dispatch({ type: 'SET_USER_INFO', info: null });
+          dispatch({ type: 'SET_IS_LOADING', status: false });
         }
       };
 
@@ -47,8 +45,8 @@ export const useAuth = () => {
     try {
       const user = (await getMe()) as any;
 
-      dispatch({ type: "SET_USER_INFO", info: user });
-      dispatch({ type: "SET_IS_LOGGED_IN", status: true });
+      dispatch({ type: 'SET_USER_INFO', info: user });
+      dispatch({ type: 'SET_IS_LOGGED_IN', status: true });
       return user;
     } catch (error) {
       throw error;
@@ -69,9 +67,9 @@ export const useAuth = () => {
 
   const logout = () => {
     removeAccessToken();
-    dispatch({ type: "SET_AUTH_TOKEN", token: null });
-    dispatch({ type: "SET_USER_INFO", info: null });
-    dispatch({ type: "SET_IS_LOGGED_IN", status: false });
+    dispatch({ type: 'SET_AUTH_TOKEN', token: null });
+    dispatch({ type: 'SET_USER_INFO', info: null });
+    dispatch({ type: 'SET_IS_LOGGED_IN', status: false });
   };
 
   const signUp = async (payload: BaseUser) => {
@@ -86,12 +84,25 @@ export const useAuth = () => {
     }
   };
 
+  const updateUser = async (payload: Partial<AuthUser>) => {
+    try {
+      const data = (await updateMe({
+        ...payload,
+      })) as any;
+      dispatch({ type: 'SET_USER_INFO', info: data });
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
   return {
     ...state,
     signIn,
     logout,
     signUp,
     getUser,
+    updateUser,
   };
 };
 
