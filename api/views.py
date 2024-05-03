@@ -258,7 +258,7 @@ class BookInteractionViewSet(viewsets.ViewSet):
             follow.delete()
             return Response({"Message": f"You have sucessfully unfollowed {follow.user}"}, status=status.HTTP_204_NO_CONTENT)
         except Follow.DoesNotExist:
-            return Response({'error': f"You have unfollowed User or the User is not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': "You have unfollowed User or the User is not found."}, status=status.HTTP_404_NOT_FOUND)
         
     def list_comments(self, request, book_id):
         # Retrieve the book owned by the authenticated user
